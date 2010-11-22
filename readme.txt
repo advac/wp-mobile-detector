@@ -39,7 +39,9 @@ If the plugin is already installed, replace the files with the new downloaded fi
 
 == Screenshots ==
 
-You can see screenshots at http://websitez.com
+1. WordPress Administration Settings
+2. Advanced Mobile Statistics
+3. Advanced Visitor Details
 
 == Changelog ==
 
