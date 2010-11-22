@@ -51,8 +51,19 @@
 		<div data-role="collapsible" data-state="collapsed" data-theme="c">
 			<h3>Meta</h3>
 			<ul data-role="listview" data-inset="true" data-theme="d">
-          <?php wp_register(); ?>
-          <li><?php wp_loginout(); ?></li>
+          <?php
+          if(is_user_logged_in()){
+          	$register = wp_register('','',false);
+          	if(strlen($register) > 0)
+          		echo "<li><a href='/wp-admin/' rel='external'>Site Admin</a></li>\n";
+          	echo "<li><a href='".wp_logout_url()."' rel='external'>Logout</a></li>\n";
+          }else{
+          	$register = wp_register('','',false);
+          	if(strlen($register) > 0)
+          		echo "<li><a href='/wp-login.php?action=register' rel='external'>Register</a></li>\n";
+          	echo "<li><a href='".wp_login_url()."' rel='external'>Login</a></li>\n";
+          }
+          ?>
           <li><a href="http://validator.w3.org/check/referer" title="This page validates as XHTML 1.0 Transitional">Valid <abbr title="eXtensible HyperText Markup Language">XHTML</abbr></a></li>
           <li><a href="http://gmpg.org/xfn/"><abbr title="XHTML Friends Network">XFN</abbr></a></li>
           <li><a href="http://wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress</a></li>

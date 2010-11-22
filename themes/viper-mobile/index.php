@@ -1,7 +1,7 @@
 <?php get_header(); ?>
 <div class="main_body_mobile">
 	<?php if(have_posts()) : ?>
-	<?php $i=0; ?>
+		<?php $i=0; ?>
 		<?php while(have_posts()) : the_post(); ?>
 			<div class="wrapper" id="post-<?php the_ID(); ?>">
 				<div class="ui-body ui-body-c">
@@ -27,11 +27,11 @@
 						<!-- Begin -->  
 						<?php the_excerpt();?>
 						<!-- End -->
+						<p><a href="<?php the_permalink(); ?>" data-role="button" rel="nofollow">Read More</a></p>
 					</div>
-					<a href="" data-role="button" data-icon="<? if($i==0) echo 'arrow-u'; else echo 'arrow-d'; ?>" data-iconpos="notext" onclick="$('<? echo '.eid'.$i; ?>').toggle('slow');"></a>
+					<a href="#" data-role="button" data-icon="<? if($i==0) echo 'arrow-u'; else echo 'arrow-d'; ?>" data-iconpos="notext" onclick="$('<? echo '.eid'.$i; ?>').toggle('slow'); return false;"></a>
 				</div>
-			<div>
-		</div></div>
+			</div>
 		<?php $i++; ?>
 		<?php endwhile; ?>
 	  <div class="navigation">

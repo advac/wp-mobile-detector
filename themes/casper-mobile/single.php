@@ -13,7 +13,7 @@
 		                  <?php if(have_posts()) : ?>
 		                  <?php while(have_posts()) : the_post(); ?>
 		  
-		                      <div class="post_mobile" id="post-<?php the_ID(); ?>">
+		                      <div class="post_mobile" id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		  
 		                          <div class="post_the_date">
 		                              <?php the_time('F j, Y') ?>

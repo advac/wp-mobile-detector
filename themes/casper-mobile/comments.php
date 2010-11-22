@@ -41,7 +41,7 @@
 
         <p>
           <input type="submit" data-inline="true" value="Submit Comment" />
-        	<input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>" />
+        	<?php comment_id_fields(); ?>
         </p>
 
     	<?php do_action('comment_form', $post->ID); ?>
@@ -79,44 +79,14 @@
 
     <h3 style="padding: 15px 0px 5px;"><?php comments_number('No Comments', '1 Comment', '% Comments' );?> to &#8220;<?php the_title(); ?>&#8221;</h3>
 
-   		<?php foreach ($comments as $comment) : ?>
-			<div class="wrapper">
-   		<div class="ui-body ui-body-c commentmetadata">
-        
-	     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-		     <tbody>
-			     <tr>
-			     	<td align="left" class="comment_body_author" style="text-align:center;"><?php  if(function_exists('get_avatar')){ echo get_avatar($comment, '80'); } ?></td>
-			     </tr>
-			     <tr>
-			     	<td align="left" class="comment_body_author" style="text-align:center;"><?php  comment_author_link() ?></td>
-			     </tr>
-			     <tr>     
-						 <td align="left" class="comment_body_meta">
-						   <span style="color:#666666;"><?php comment_date('F j, Y') ?></span> <?php edit_comment_link('Edit Comment','',''); ?>
-						   <?php if ($comment->comment_approved == '0') : ?>
-						   <em>
-						   <?php _e('This comment is awaiting moderation.'); ?>
-						   </em>
-						   <?php endif; ?>
-						 </td>
-			     </tr>
-			     <tr>
-			          <td width="75%" align="left" class="comment_body_text"><?php comment_text() ?></td>
-			     </tr>
-		     </tbody>
-	     </table>
-                       
-    	</div>
-			</div>
+   		<div class="navigation">
+  		<div class="alignleft"><?php previous_comments_link() ?></div>
+			<div class="alignright"><?php next_comments_link() ?></div>
+ 		</div>
+ 		
 		<?php
-
-            if ('alt' == $oddcomment) $oddcomment = '';
-            else $oddcomment = 'alt';
-
-        ?>
-
-   		<?php endforeach; ?>
+		wp_list_comments( array( 'callback' => 'websitez_comment' ) );
+		?>
 
     <?php else : ?>
     

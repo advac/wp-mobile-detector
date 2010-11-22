@@ -1,58 +1,49 @@
-<?php get_header(); ?> 
-<div class="main_body_mobile">           
-	<div class="wrapper">
-		<div class="ui-body ui-body-c">
-              		
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tbody>
-                        <tr>
-                        
-                            <td valign="top" style="width:100%;">
-                                <div id="container">
-                    
-                                    <?php if(have_posts()) : ?>
-                                    <?php while(have_posts()) : the_post(); ?>
-                    
-                                        <div class="post_mobile" id="post-<?php the_ID(); ?>">
-                    
-                                            <div class="post_the_date">
-                                                <?php the_time('F j, Y') ?>
-                                            </div>
-                                            <div class="post_the_title">
-                                                <h2><a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a></h2>
-                                            </div>        
-                                            
-											<div class="entry">                        
-												<p class="postmetadata">
-												</p>
-											</div>
-                                               	
-                    
-                                        </div>                    
-                    
-                                    <?php endwhile; ?>
-                                    
-                                       <div class="navigation">
-                                            <?php posts_nav_link(' &#124; ','&#171; previous','next &#187;'); ?>
-                                       </div>               
-                    
-                                    <?php else : ?>
-                    
-                                        <div class="post" id="post-<?php the_ID(); ?>">
-                                            <h2><?php _e('No posts are added.'); ?></h2>
-                                        </div>
-                    
-                                    <?php endif; ?>
-                                    
-                                </div>
-                            </td>
-
-						</tr>
-                    </tbody>
-                    </table>  
-        
-		</div>
+<?php get_header(); ?>
+<div class="main_body_mobile">
+	<?php if(have_posts()) : ?>
+		<?php $i=0; ?>
+		<?php while(have_posts()) : the_post(); ?>
+			<div class="wrapper" id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				<div class="ui-body ui-body-c">
+					<div class="ui-grid-a">
+						<div class="ui-block-a" style="width: 80px;">
+							<div class="calendar-day">
+								<div class="month">
+									<?php the_time('M') ?>
+								</div>
+								<div class="day">
+									<?php the_time('j') ?>
+								</div>
+							</div>
+						</div>
+						<div class="ui-block-b" style="width: 70%; padding-top: 8px;">
+							<div class="post_the_title">
+					    	<h2><a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a></h2>
+								<p class="postmetadata">Author: <?php the_author(); ?></p>
+					    </div>
+						</div>
+					</div><!-- /grid-a -->
+					<div class="entry eid<?php echo $i; ?>" style="<?php if($i!=0) echo 'display: none;';?>">
+						<!-- Begin -->  
+						<?php 
+						the_excerpt();
+						?>
+						<!-- End -->
+						<p><a href="<?php the_permalink(); ?>" data-role="button" rel="nofollow">Read More</a></p>
+					</div>
+					<a href="#" data-role="button" data-icon="<?php if($i==0) echo 'arrow-u'; else echo 'arrow-d'; ?>" data-iconpos="notext" onclick="$('<?php echo '.eid'.$i; ?>').toggle('slow'); return false;"></a>
+				</div>
+			</div>
+		<?php $i++; ?>
+		<?php endwhile; ?>
+	  <div class="navigation">
+	  	<?php posts_nav_link(' &#124; ','&#171; previous','next &#187;'); ?>
+	  </div>               
+	<?php else : ?>
+	<div class="post" id="post-<?php the_ID(); ?>">
+		<h2><?php _e('No posts are added.'); ?></h2>
 	</div>
+	<?php endif; ?>
 </div>
 <?php get_sidebar(); ?>
-<?php get_footer(); ?>        
+<?php get_footer(); ?>      

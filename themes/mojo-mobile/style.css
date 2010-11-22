@@ -1,7 +1,7 @@
 /*   
 Theme Name: Mojo Mobile
 Theme URI: http://websitez.com
-Description: Mojo Mobile is a powerful mobile template that utilizes the jQuery mobile framework to give an advanced user experience.
+Description: Mojo Mobile is a powerful mobile theme that utilizes the jQuery mobile framework to give an advanced user experience. Combine with the <a href="http://websitez.com/products-page/featured/wp-mobile-detector-plugin/">WP Mobile Detector</a> for a great mobile experience.
 Author: Websitez.com
 Author URI: http://www.websitez.com
 Version: 1.0
@@ -245,10 +245,20 @@ width:100%;}
 	font-size: 10px;
 	font-weight: bold;
 	text-align: center;
-	padding-top: 37px;
+	padding-top: 34px;
 }
 .calendar-day .day{
 	font-size: 20px;
 	font-weight: bold;
 	text-align: center;
+}
+.websitez_footer{
+	font-size: .6em; text-align: center; padding: 0px 0px 6px;
+}
+.websitez_footer_mobile{
+	font-size: 1em; text-align: center; padding: 4px 0px;
+}
+.ui-input-search { padding: 0 30px; width: 77%; background-position: 8px 50%; background-repeat: no-repeat; position: relative; margin: 0 auto; }
+.wp-caption, .wp-caption-text, .gallery-caption{
+	font-size: .6em;
 }

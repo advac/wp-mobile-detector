@@ -51,7 +51,7 @@
 		<div data-role="collapsible" data-state="collapsed" data-theme="e">
 			<h3>Meta</h3>
 			<ul data-role="listview" data-inset="true" data-theme="c">
-          <?
+          <?php
           if(is_user_logged_in()){
           	$register = wp_register('','',false);
           	if(strlen($register) > 0)
