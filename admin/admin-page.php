@@ -233,13 +233,6 @@ function websitez_configuration_page()
 			<td width="60%" valign="top">
 				<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?></h1>
 				<p><?php _e('Configure which theme to show to each mobile device.') ?></p>
-				<?
-				if($websitez_free_version == true){
-				?>
-				<p><?php _e('You are currently using the <strong>free version</strong>.</p><p><a href="http://websitez.com/wp-mobile-detector/upgrade" target="_blank" rel="external">Upgrade WP Mobile Detector</a> to receive free version upgrades, automatic removal of required footer link, and more!') ?></p>
-				<?
-				}
-				?>
 			</td>
 			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
 				<p><a href="http://ready.mobi/results.jsp?uri=<?=bloginfo('url')?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?=plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
