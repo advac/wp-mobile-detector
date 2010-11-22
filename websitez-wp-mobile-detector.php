@@ -20,7 +20,7 @@ global $websitez_preinstalled_templates;
 $websitez_preinstalled_templates = true;
 //If this is the free version, keep the attribution, otherwise remove attribution and check for authorization
 global $websitez_free_version;
-$websitez_free_version = false;
+$websitez_free_version = true;
 
 /*
 Define Globals
