@@ -48,3 +48,9 @@ If the plugin is already installed, replace the files with the new downloaded fi
 = 1.0 =
 
 + Release of plugin.
+
+= 1.1 =
+
++ Fixed improper call in administration page.
+
++ Fixed a foreach error on the statistics page.
