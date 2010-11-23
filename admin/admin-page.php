@@ -198,17 +198,19 @@ function websitez_stats_page(){
 				</tr>
 			</thead>
 			<?
-			foreach($visitors as $v):
-			?>
-			<tr valign="top" class="author-self status-publish iedit">
-				<td style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/<? if($v['type'] == "2") echo "basic_phone_icon_16x16.gif"; else echo "phone_icon_16x16.png";?>"></td>
-				<td><?php _e('<p>'.count($v['visits']).'</p>') ?></td>
-				<td><?php _e('<p>'.date("Y-m-d H:i:s", strtotime($v['visits'][(count($v['visits'])-1)])).'</p>') ?></td>
-				<td><?php _e('<p>'.$v['data']['REMOTE_ADDR'].'</p>') ?></td>
-				<td><?php _e('<p>'.$v['data']['HTTP_USER_AGENT'].'</p>') ?></td>
-			</tr>
-			<?
-			endforeach;
+			if(count($visitors) > 0){
+				foreach($visitors as $v):
+				?>
+				<tr valign="top" class="author-self status-publish iedit">
+					<td style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/<? if($v['type'] == "2") echo "basic_phone_icon_16x16.gif"; else echo "phone_icon_16x16.png";?>"></td>
+					<td><?php _e('<p>'.count($v['visits']).'</p>') ?></td>
+					<td><?php _e('<p>'.date("Y-m-d H:i:s", strtotime($v['visits'][(count($v['visits'])-1)])).'</p>') ?></td>
+					<td><?php _e('<p>'.$v['data']['REMOTE_ADDR'].'</p>') ?></td>
+					<td><?php _e('<p>'.$v['data']['HTTP_USER_AGENT'].'</p>') ?></td>
+				</tr>
+				<?
+				endforeach;
+			}
 			?>
 		</table>
 	</div>
@@ -233,13 +235,6 @@ function websitez_configuration_page()
 			<td width="60%" valign="top">
 				<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?></h1>
 				<p><?php _e('Configure which theme to show to each mobile device.') ?></p>
-				<?
-				if($websitez_free_version == true){
-				?>
-				<p><?php _e('You are currently using the <strong>free version</strong>.</p><p><a href="http://websitez.com/wp-mobile-detector/upgrade" target="_blank" rel="external">Upgrade WP Mobile Detector</a> to receive free version upgrades, automatic removal of required footer link, and more!') ?></p>
-				<?
-				}
-				?>
 			</td>
 			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
 				<p><a href="http://ready.mobi/results.jsp?uri=<?=bloginfo('url')?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?=plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
@@ -385,7 +380,7 @@ function websitez_configuration_page()
 Get the dynamic footer remotely
 */
 function websitez_dynamic_footer(){
-	$websitez_footer = file_get_contents("http://mobile.websitez.com/api/websitez-wp-mobile-detector/footer.php");
+	$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
 	return $websitez_footer;
 }
 
@@ -393,7 +388,7 @@ function websitez_dynamic_footer(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers(){
-	$websitez_offers = file_get_contents("http://mobile.websitez.com/api/websitez-wp-mobile-detector/offers.php");
+	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers.php");
 	return $websitez_offers;
 }
 
@@ -401,7 +396,7 @@ function websitez_dynamic_offers(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers_stats(){
-	$websitez_offers = file_get_contents("http://mobile.websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
+	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
 	return $websitez_offers;
 }
 ?>
