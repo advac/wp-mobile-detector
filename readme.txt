@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 1.4
+Stable tag: 1.5
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -28,7 +28,7 @@ Included in this plugin is the Anakin Mobile, Casper Mobile, Colbalt Mobile, Moj
 
 == Installation ==
 
-1. Drop the websitez-wp-mobile-detector folder in your wp-content/plugins directory
+1. Unzip and place the 'websitez-wp-mobile-detector' folder in your 'wp-content/plugins' directory
 2. Click the 'Activate' link for WP Mobile Detector on your Plugins page (in the WordPress administration page)
 
 == Frequently Asked Questions ==
@@ -36,20 +36,6 @@ Included in this plugin is the Anakin Mobile, Casper Mobile, Colbalt Mobile, Moj
 = I am getting an error that it was unable to install correctly. What do I do? =
 
 Please try deactivating and reactivating the plugin. If that does not work, please contact support@websitez.com and we will help you get the plugin installed.
-
-= I am getting an error that says my domain is not authorized for this plugin. =
-
-This is happens when the domain that is installing the plugin does not match the domain that was given when the plugin was purchased.
-
-If you believe this to be an error, please contact support@websitez.com and we will work with you to fix the domain authorization issue.
-
-= How can I upgrade to the paid version? =
-
-To upgrade to the paid version, visit http://websitez.com and purchase the WP Mobile Detector plugin.
-
-Once downloaded, you can copy the files over to the plugins directory on your website.
-
-If the plugin is already installed, replace the files with the new downloaded files.
 
 == Screenshots ==
 
@@ -64,12 +50,28 @@ If the plugin is already installed, replace the files with the new downloaded fi
 
 == Changelog ==
 
-= 1.0 =
+= 1.5 =
 
-+ Release of plugin.
++ Added the ability to configure the use of pre-installed templates or standard templates.
+
+= 1.4 = 
+
++ Adjusted the FAQ
+
+= 1.3 =
+
++ Added more screenshots
+
+= 1.2 =
+
++ Added screenshots and adjusted plugin description
 
 = 1.1 =
 
 + Fixed improper call in administration page.
 
 + Fixed a foreach error on the statistics page.
+
+= 1.0 =
+
++ Release of plugin.

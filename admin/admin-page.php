@@ -47,6 +47,8 @@ function websitez_stats_page(){
 	      $total_bing_bot_visits = 0;
 	      $total_basic_unique_visits = 0;
 	      $total_advanced_unique_visits = 0;
+				$total_advanced_visits = 0;
+				$total_basic_visits = 0;
 	      if(isset($_GET['type']) && $_GET['type'] == "mtd"){
 	      	$report_title = "Mobile Visits Month To Date";
 	      	$end_num = date("d");
@@ -79,42 +81,48 @@ function websitez_stats_page(){
 	      }
 	      //TODO FIX TIMEZONE ISSUE WITH WORDPRESS OFFSET
 				$results = $wpdb->get_results("SELECT * FROM ".WEBSITEZ_STATS_TABLE." WHERE created_at BETWEEN '".$start_date."' AND '".$end_date."' ORDER BY created_at DESC");
-				//Put each unique visitor into an array
-				foreach($results as $ar):
-					$data = unserialize($ar->data);
-					if(array_key_exists($data['REMOTE_ADDR'],$visitors)){
-						$visitors[$data['REMOTE_ADDR']]['visits'][] = $ar->created_at;
-					}else{
-						$visitors[$data['REMOTE_ADDR']] = array('type'=>$ar->device_type,'data'=>$data,'visits'=>array($ar->created_at));
-					}
-				endforeach;
-				//Put together an array to display in the chart below
-				foreach($visitors as $unique_visit):
-					$type = $unique_visit['type'];
-					//Get visit total
-					if($type==2)
-						$total_basic_visits += count($unique_visit['visits']);
-					else if($type==1)
-						$total_advanced_visits += count($unique_visit['visits']);
-					
-					if(preg_match('/(googlebot\-mobile|googlebot mobile)/i',$unique_visit['data']['HTTP_USER_AGENT'])){
-						$total_googlebot_visits++;
-					}else if(preg_match('/(MSNBOT_Mobile|MSNBOT-Mobile|MSNBOT Mobile)/i',$unique_visit['data']['HTTP_USER_AGENT'])){
-						$total_msnbot_visits++;
-					}
-						
-					//Create the array to put into the chart
-					foreach($unique_visit['visits'] as $unique_visit_date):
-						$day = date("m/d", strtotime($unique_visit_date));
-						if(!array_key_exists($day,$chart_this)){
-							$chart_this[$day][$type] = 1;
-							break;
+				if(count($results) > 0){
+					//Put each unique visitor into an array
+					foreach($results as $ar):
+						$data = unserialize($ar->data);
+						if(array_key_exists($data['REMOTE_ADDR'],$visitors)){
+							$visitors[$data['REMOTE_ADDR']]['visits'][] = $ar->created_at;
 						}else{
-							$chart_this[$day][$type] = $chart_this[$day][$type] + 1;
-							break;
+							$visitors[$data['REMOTE_ADDR']] = array('type'=>$ar->device_type,'data'=>$data,'visits'=>array($ar->created_at));
 						}
 					endforeach;
-				endforeach;
+				}
+				//Put together an array to display in the chart below
+				if(count($visitors) > 0){
+					foreach($visitors as $unique_visit):
+						$type = $unique_visit['type'];
+						//Get visit total
+						if($type==2)
+							$total_basic_visits += count($unique_visit['visits']);
+						else if($type==1)
+							$total_advanced_visits += count($unique_visit['visits']);
+					
+						if(preg_match('/(googlebot\-mobile|googlebot mobile)/i',$unique_visit['data']['HTTP_USER_AGENT'])){
+							$total_googlebot_visits++;
+						}else if(preg_match('/(MSNBOT_Mobile|MSNBOT-Mobile|MSNBOT Mobile)/i',$unique_visit['data']['HTTP_USER_AGENT'])){
+							$total_msnbot_visits++;
+						}
+						
+						//Create the array to put into the chart
+						if(count($unique_visit['visits']) > 0){
+							foreach($unique_visit['visits'] as $unique_visit_date):
+								$day = date("m/d", strtotime($unique_visit_date));
+								if(!array_key_exists($day,$chart_this)){
+									$chart_this[$day][$type] = 1;
+									break;
+								}else{
+									$chart_this[$day][$type] = $chart_this[$day][$type] + 1;
+									break;
+								}
+							endforeach;
+						}
+					endforeach;
+				}
 				//End visitor calculations
 				?>
 				data.addColumn('number', 'Advanced Mobile Device');
@@ -122,20 +130,22 @@ function websitez_stats_page(){
 				data.addRows(<?=count($chart_this)?>);
 				<?
 				$j=0;
-				foreach($chart_this as $day=>$day_data):
-					echo "data.setValue(".$j.", 0,'".$day."');\n";
-					if($day_data[2])
-						echo "data.setValue(".$j.", 2, ".$day_data[2].");\n";
-					else
-						echo "data.setValue(".$j.", 2, 0);\n";
-					if($day_data[1])
-						echo "data.setValue(".$j.", 1, ".$day_data[1].");\n";
-					else
-						echo "data.setValue(".$j.", 1, 0);\n";
-					$total_basic_unique_visits += $day_data[2];
-					$total_advanced_unique_visits += $day_data[1];
-					$j++;
-				endforeach;
+				if(count($chart_this) > 0){
+					foreach($chart_this as $day=>$day_data):
+						echo "data.setValue(".$j.", 0,'".$day."');\n";
+						if($day_data[2])
+							echo "data.setValue(".$j.", 2, ".$day_data[2].");\n";
+						else
+							echo "data.setValue(".$j.", 2, 0);\n";
+						if($day_data[1])
+							echo "data.setValue(".$j.", 1, ".$day_data[1].");\n";
+						else
+							echo "data.setValue(".$j.", 1, 0);\n";
+						$total_basic_unique_visits += $day_data[2];
+						$total_advanced_unique_visits += $day_data[1];
+						$j++;
+					endforeach;
+				}
 	      ?>
 				var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
 	      //var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -226,8 +236,6 @@ function websitez_stats_page(){
 function websitez_configuration_page() 
 {
 	global $wpdb, $websitez_plugin_description, $table_prefix, $websitez_free_version;
-
-	$current_themes_installed = websitez_get_current_themes();
 ?>
 <div class="wrap">
 	<table width="100%" cellpadding="0" cellspacing="0">
@@ -304,13 +312,34 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
+	}else if(isset($_POST['use_preinstalled_themes'])){
+		$value = $_POST['use_preinstalled_themes'];
+		
+		if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
+			if(update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, $value)){
+				$u = true;
+			}else{
+				$u = false;
+			}
+		}else{
+			$u = false;
+		}
+		
+		if($u)
+			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
+		else
+			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
+		
 	}
+	
+	//Now that the settings are saved, get the themes
+	$current_themes_installed = websitez_get_current_themes();
 ?>
 		<table class="widefat post fixed" cellspacing="0">
 			<thead>
 				<tr>
 					<th class="manage-column" scope="col" width="180">Phone Type</th>
-					<th class="manage-column" scope="col" width="150">Mobile Theme</th>
+					<th class="manage-column" scope="col" width="250">Mobile Theme</th>
 					<?/*<th class="manage-column" scope="col" width="370">Redirect URL</th>*/?>
 					<th class="manage-column" scope="col">Operation</th>
 				</tr>
@@ -327,6 +356,7 @@ function websitez_configuration_page()
 				<th scope="row"><?php _e($type['name']) ?></th>
 				<td>
 					<select name="<?= $type['option'] ?>" class="theme_template">
+							<option name="theme_template" value="<?php echo WEBSITEZ_DEFAULT_THEME; ?>">Please select a mobile theme...</option>
 							<?php foreach($current_themes_installed as $name => $mobile_theme): ?>
 							<option name="theme_template" value="<?php echo $mobile_theme['Template']; ?>" <?php if($option==$mobile_theme['Template']) echo 'selected="selected"'; ?>><?php _e($name); ?></option>
 						<?php endforeach; ?>
@@ -342,13 +372,14 @@ function websitez_configuration_page()
 		</table>
 		<?
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
+		$websitez_use_preinstalled_themes = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 		?>
 		<form action="" method="POST">
 		<div style="margin:10px 0;">
 			<table class="widefat post fixed" cellspacing="0">
 				<thead>
 					<tr>
-						<th class="manage-column" scope="col" width="345">Record mobile statistics?</th>
+						<th class="manage-column" scope="col" width="445">Record mobile statistics?</th>
 						<th class="manage-column" scope="col">Operation</th>
 					</tr>
 				</thead>
@@ -357,6 +388,29 @@ function websitez_configuration_page()
 						<select name="record_stats" class="theme_template" style="width: 100px;">
 								<option value="true" <? if($websitez_record_stats == "true") echo "selected";?>><?php _e('Yes'); ?></option>
 								<option value="false" <? if($websitez_record_stats == "false") echo "selected";?>><?php _e('No'); ?></option>
+						</select>
+					</td>
+					<td>
+						<input type="submit" class="button submit" value="Update">
+					</td>
+				</tr>
+			</table>
+		</div>
+		</form>
+		<form action="" method="POST">
+		<div style="margin:10px 0;">
+			<table class="widefat post fixed" cellspacing="0">
+				<thead>
+					<tr>
+						<th class="manage-column" scope="col" width="445">Use pre-installed themes?</th>
+						<th class="manage-column" scope="col">Operation</th>
+					</tr>
+				</thead>
+				<tr valign="top" class="author-self status-publish iedit">
+					<td>
+						<select name="use_preinstalled_themes" class="theme_template" style="width: 100px;">
+								<option value="true" <? if($websitez_use_preinstalled_themes == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <? if($websitez_use_preinstalled_themes == "false") echo "selected";?>><?php _e('No'); ?></option>
 						</select>
 					</td>
 					<td>
