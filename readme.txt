@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 1.2
+Stable tag: 1.3
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -56,6 +56,11 @@ If the plugin is already installed, replace the files with the new downloaded fi
 1. WordPress Administration Settings
 2. Advanced Mobile Statistics
 3. Advanced Visitor Details
+4. Anakin Mobile Theme
+5. Casper Mobile Theme
+6. Colbalt Mobile Theme
+7. Mojo Mobile Theme
+8. Viper Mobile Theme
 
 == Changelog ==
 
