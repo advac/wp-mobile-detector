@@ -4,7 +4,7 @@
  Plugin URI: http://www.websitez.com/
  Description: The WP Mobile Detector wordpress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each. This plugin is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
- Version: 1.0
+ Version: 1.3
  Author: Websitez.com
  Author URI: http://www.websitez.com
 */
@@ -18,7 +18,7 @@ global $table_prefix;
 //Does this plugin come with pre-installed templates?
 global $websitez_preinstalled_templates;
 $websitez_preinstalled_templates = true;
-//If this is the free version, keep the attribution, otherwise remove attribution and check for authorization
+//Putting this in for the future
 global $websitez_free_version;
 $websitez_free_version = true;
 
