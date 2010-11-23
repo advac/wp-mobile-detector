@@ -313,7 +313,8 @@ function websitez_check_and_act_mobile(){
 	}else{
 		//If it is the free version, add attribution
 		if($websitez_free_version == true){
-			add_action('wp_footer', 'websitez_web_footer_standard');
+			//Removing this link for now
+			//add_action('wp_footer', 'websitez_web_footer_standard');
 		}
 		//This means it is not a mobile device
 	}
