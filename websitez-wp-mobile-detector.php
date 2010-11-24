@@ -4,7 +4,7 @@
  Plugin URI: http://www.websitez.com/
  Description: The WP Mobile Detector wordpress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each. This plugin is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
- Version: 1.0
+ Version: 1.6.1
  Author: Websitez.com
  Author URI: http://www.websitez.com
 */
@@ -15,10 +15,7 @@ Get the necessary files
 require(dirname(__FILE__) . '/functions.php');
 
 global $table_prefix;
-//Does this plugin come with pre-installed templates?
-global $websitez_preinstalled_templates;
-$websitez_preinstalled_templates = true;
-//If this is the free version, keep the attribution, otherwise remove attribution and check for authorization
+//Putting this in for the future
 global $websitez_free_version;
 $websitez_free_version = true;
 
@@ -36,8 +33,14 @@ define('WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH', '250');
 define('WEBSITEZ_STATS_TABLE', $table_prefix.'websitez_stats');
 define('WEBSITEZ_RECORD_STATS_NAME', 'websitez_record_stats');
 define('WEBSITEZ_RECORD_STATS', "true");
+define('WEBSITEZ_USE_PREINSTALLED_THEMES', "true");
+define('WEBSITEZ_USE_PREINSTALLED_THEMES_NAME', "websitez_preinstalled_themes");
 define('WEBSITEZ_BASIC_URL_REDIRECT', 'websitez_basic_url_redirect');
 define('WEBSITEZ_ADVANCED_URL_REDIRECT', 'websitez_advanced_url_redirect');
+
+//Does this plugin come with pre-installed templates?
+global $websitez_preinstalled_templates;
+$websitez_preinstalled_templates = "true";
 
 // Install plugin
 if(function_exists('register_activation_hook')) {
@@ -55,7 +58,7 @@ if(is_admin()) {
 Lets get this party started.
 */
 if(websitez_check_and_act_mobile()){
-	if($websitez_preinstalled_templates == true){
+	if($websitez_preinstalled_templates == "true"){
 		require(dirname(__FILE__) . '/default-widgets.php');
 		if(!is_admin()){
 			add_filter('theme_root', 'websitez_setThemeFolder');

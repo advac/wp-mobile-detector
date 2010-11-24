@@ -5,7 +5,7 @@ if ( ! isset( $content_width ) )
 if (function_exists('register_sidebar'))
   register_sidebar();
 
-add_action( 'after_setup_theme', 'twentyten_setup' );
+add_action( 'after_setup_theme', 'websitez_setup' );
 
 if (!function_exists('websitez_setup')){
 	function websitez_setup() {
