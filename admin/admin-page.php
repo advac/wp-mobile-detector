@@ -49,6 +49,7 @@ function websitez_stats_page(){
 	      $total_advanced_unique_visits = 0;
 				$total_advanced_visits = 0;
 				$total_basic_visits = 0;
+				$visitors = array();
 	      if(isset($_GET['type']) && $_GET['type'] == "mtd"){
 	      	$report_title = "Mobile Visits Month To Date";
 	      	$end_num = date("d");
