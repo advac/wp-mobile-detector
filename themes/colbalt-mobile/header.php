@@ -29,7 +29,7 @@
 	<div id="wrapper_mobile" data-role="page">
 		<div class="ui-grid-b" data-role="header" data-theme="b" style="margin-bottom: 5px;">
 			<h1><?php bloginfo('name'); ?></h1>
-			<a href="" data-role="button" data-inline="true" data-icon="plus" data-iconpos="notext" onClick="websitez_extendMenu();" class="ui-btn-right"></a>
+			<a href="" data-role="button" data-inline="true" data-icon="plus" data-iconpos="notext" onClick="websitez_extendMenu();" class="ui-btn-right header-expand"></a>
 			<div class="wrapper exMenu" style="display: none;">
 				<?php get_search_form(); ?>
 			</div>

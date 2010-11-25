@@ -31,7 +31,8 @@
 						<!-- End -->
 						<p><a href="<?php the_permalink(); ?>" data-role="button" rel="nofollow">Read More</a></p>
 					</div>
-					<a href="#" data-role="button" data-icon="<?php if($i==0) echo 'arrow-u'; else echo 'arrow-d'; ?>" data-iconpos="notext" onclick="$('<?php echo '.eid'.$i; ?>').toggle('slow'); return false;"></a>
+					<a class="arrow-nav<?php echo $i;?>" href="#" data-role="button" data-icon="arrow-u" data-iconpos="notext" onclick="$('<? echo '.eid'.$i; ?>').toggle('slow'); $('.arrow-nav<?php echo $i;?>').toggle('fast'); return false;" style="<? if($i!=0) echo 'display: none;'; ?>"></a>
+					<a class="arrow-nav<?php echo $i;?>" href="#" data-role="button" data-icon="arrow-d" data-iconpos="notext" onclick="$('<? echo '.eid'.$i; ?>').toggle('slow'); $('.arrow-nav<?php echo $i;?>').toggle('fast'); return false;" style="<? if($i==0) echo 'display: none;'; ?>"></a>
 				</div>
 			</div>
 		<?php $i++; ?>
