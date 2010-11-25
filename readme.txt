@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -49,6 +49,12 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 8. Viper Mobile Theme
 
 == Changelog ==
+
+= 1.6.2 =
+
++ Adjusted all 5 themes to toggle header menu button and post excerpt buttons.
++ Reduced basic theme page size by over 30%
++ Basic Mobile Themes validate 100% against the XHTML Mobile Profile
 
 = 1.6.1 =
 

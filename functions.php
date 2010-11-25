@@ -183,10 +183,69 @@ Filter content for a basic mobile device
 */
 function websitez_filter_basic_page($html){
 	global $websitez_preinstalled_templates;
+
+	//Resize the images on the page
+	$dom = new DOMDocument();
+	$dom->loadHTML($html);
+	
+	// grab all the on the page and make sure they are the right size
+	$xpath = new DOMXPath($dom);
+	$divs = $xpath->evaluate("/html/body//div");
+	
+	for ($i = 0; $i < $divs->length; $i++) {
+		$div = $divs->item($i);
+		$div->removeAttribute('data-role');
+		$div->removeAttribute('data-theme');
+		$div->removeAttribute('style');
+		$div->removeAttribute('data-icon');
+		$div->removeAttribute('data-iconpos');
+		$div->removeAttribute('onclick');
+		$div->removeAttribute('data-state');
+	}
+	
+	$links = $xpath->evaluate("/html/body//a");
+	
+	for ($i = 0; $i < $links->length; $i++) {
+		$link = $links->item($i);
+		$link->removeAttribute('data-inline');
+		$link->removeAttribute('data-role');
+		$link->removeAttribute('data-theme');
+		$link->removeAttribute('style');
+		$link->removeAttribute('data-icon');
+		$link->removeAttribute('data-iconpos');
+		$link->removeAttribute('onclick');
+	}
+	
+	$uls = $xpath->evaluate("/html/body//ul");
+	
+	for ($i = 0; $i < $uls->length; $i++) {
+		$ul = $uls->item($i);
+		$ul->removeAttribute('data-inline');
+		$ul->removeAttribute('data-role');
+		$ul->removeAttribute('data-theme');
+		$ul->removeAttribute('data-inset');
+		$ul->removeAttribute('style');
+		$ul->removeAttribute('data-icon');
+		$ul->removeAttribute('data-iconpos');
+		$ul->removeAttribute('onclick');
+	}
+	
+	$htmls = $xpath->evaluate("/html");
+	
+	for ($i = 0; $i < $htmls->length; $i++) {
+		$h = $htmls->item($i);
+		$h->removeAttribute('dir');
+		$h->removeAttribute('lang');
+	}
+	
+	$text = $dom->saveHTML();
+	
 	$text = preg_replace(
 	  array(
 	  	// Remove invisible content
+	  	'@<meta[^>]*?>@siu',
 	  	'@<link[^>]*?>@siu',
+	  	'@<form[^>]*?>.*?</form>@siu',
 	    '@<style[^>]*?>.*?</style>@siu',
 	    '@<script[^>]*?.*?</script>@siu',
 	    '@<object[^>]*?.*?</object>@siu',
@@ -206,14 +265,19 @@ function websitez_filter_basic_page($html){
 	    '@</?((frameset)|(frame)|(iframe))@iu',
 	  ),
 	  array(
-	    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
 	    "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
 	    "\n\$0", "\n\$0",
 	  ),
-	  $html );
-	  //If it is a websitez template, run the basic device stylesheet
-	  if($websitez_preinstalled_templates == "true")
-	  	$text = str_replace("</head>","<link rel='stylesheet' href='".get_bloginfo('stylesheet_directory')."/basic-device.css' />\n</head>\n",$text);
+	  $text );
+  //If it is a websitez template, run the basic device stylesheet
+  if($websitez_preinstalled_templates == "true")
+  	$text = str_replace("</head>","<link rel='stylesheet' href='".get_bloginfo('stylesheet_directory')."/basic-device.css' />\n</head>\n",$text);
+	
+	$text = preg_replace('/\s\s+/', '', $text);
+  $text = preg_replace('/<!--(.*?)-->/', '', $text);
+  $text = preg_replace('/\n/', '', $text);
+		
 	return $text;
 }
 
