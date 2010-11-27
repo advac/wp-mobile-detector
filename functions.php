@@ -336,11 +336,7 @@ function websitez_check_and_act_mobile(){
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
-			try{
-				$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
-			}catch (Exception $e){
-				//Do nothing
-			}
+			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
 
 		if($mobile_device['type'] == "2"){ //Standard device
