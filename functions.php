@@ -39,7 +39,7 @@ This is called on activation of the plugin
 function websitez_install(){
 	global $wpdb, $websitez_free_version, $websitez_preinstalled_templates, $table_prefix;
 	
-	//Always ping on installation
+	/*Always ping on installation
 	$domain = $_SERVER['HTTP_HOST'];
 	$tmp = explode(".",$domain);
 	$count = count($tmp);
@@ -48,7 +48,7 @@ function websitez_install(){
 	}else{
 		$token = $domain;
 	}
-	$authorization = unserialize(file_get_contents("http://mobile.websitez.com/authorize.php?token=".rawurlencode($token)));
+	$authorization = unserialize(file_get_contents("http://mobile.websitez.com/authorize.php?token=".rawurlencode($token)));*/
 	
 	/*
 	Insert the proper values into the db
@@ -70,8 +70,6 @@ function websitez_install(){
 		
 		  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		  dbDelta($sql);
-		
-		  //$insert = $wpdb->insert( WEBSITEZ_STATS_TABLE, array( 'data' => implode("|", $_SERVER, 'device_type' => '1', 'created_at' => date("Y-m-d H:i:s") ) );
 		}
 		
 		//Keeping the URL redirect code, but waiting to implement it pending research. TODO
@@ -81,17 +79,20 @@ function websitez_install(){
 		if(!get_option(WEBSITEZ_ADVANCED_URL_REDIRECT))
 			add_option(WEBSITEZ_ADVANCED_URL_REDIRECT, '', '', 'yes');*/
 			
-		if(!get_option(WEBSITEZ_RECORD_STATS))
+		if(!get_option(WEBSITEZ_RECORD_STATS_NAME))
 			add_option(WEBSITEZ_RECORD_STATS_NAME, WEBSITEZ_RECORD_STATS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME))
+			add_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, WEBSITEZ_USE_PREINSTALLED_THEMES, '', 'yes');
 			
 		if(!get_option(WEBSITEZ_BASIC_THEME)){
-			if($websitez_preinstalled_templates == true)
+			if(WEBSITEZ_USE_PREINSTALLED_THEMES == "true")
 				add_option(WEBSITEZ_BASIC_THEME, WEBSITEZ_INSTALL_BASIC_THEME, '', 'yes');
 			else
 				add_option(WEBSITEZ_BASIC_THEME, WEBSITEZ_DEFAULT_THEME, '', 'yes');
 		}
 		if(!get_option(WEBSITEZ_ADVANCED_THEME)){
-			if($websitez_preinstalled_templates == true)
+			if(WEBSITEZ_USE_PREINSTALLED_THEMES == "true")
 				add_option(WEBSITEZ_ADVANCED_THEME, WEBSITEZ_INSTALL_ADVANCED_THEME, '', 'yes');
 			else
 				add_option(WEBSITEZ_ADVANCED_THEME, WEBSITEZ_DEFAULT_THEME, '', 'yes');
@@ -182,10 +183,69 @@ Filter content for a basic mobile device
 */
 function websitez_filter_basic_page($html){
 	global $websitez_preinstalled_templates;
+
+	//Resize the images on the page
+	$dom = new DOMDocument();
+	$dom->loadHTML($html);
+	
+	// grab all the on the page and make sure they are the right size
+	$xpath = new DOMXPath($dom);
+	$divs = $xpath->evaluate("/html/body//div");
+	
+	for ($i = 0; $i < $divs->length; $i++) {
+		$div = $divs->item($i);
+		$div->removeAttribute('data-role');
+		$div->removeAttribute('data-theme');
+		$div->removeAttribute('style');
+		$div->removeAttribute('data-icon');
+		$div->removeAttribute('data-iconpos');
+		$div->removeAttribute('onclick');
+		$div->removeAttribute('data-state');
+	}
+	
+	$links = $xpath->evaluate("/html/body//a");
+	
+	for ($i = 0; $i < $links->length; $i++) {
+		$link = $links->item($i);
+		$link->removeAttribute('data-inline');
+		$link->removeAttribute('data-role');
+		$link->removeAttribute('data-theme');
+		$link->removeAttribute('style');
+		$link->removeAttribute('data-icon');
+		$link->removeAttribute('data-iconpos');
+		$link->removeAttribute('onclick');
+	}
+	
+	$uls = $xpath->evaluate("/html/body//ul");
+	
+	for ($i = 0; $i < $uls->length; $i++) {
+		$ul = $uls->item($i);
+		$ul->removeAttribute('data-inline');
+		$ul->removeAttribute('data-role');
+		$ul->removeAttribute('data-theme');
+		$ul->removeAttribute('data-inset');
+		$ul->removeAttribute('style');
+		$ul->removeAttribute('data-icon');
+		$ul->removeAttribute('data-iconpos');
+		$ul->removeAttribute('onclick');
+	}
+	
+	$htmls = $xpath->evaluate("/html");
+	
+	for ($i = 0; $i < $htmls->length; $i++) {
+		$h = $htmls->item($i);
+		$h->removeAttribute('dir');
+		$h->removeAttribute('lang');
+	}
+	
+	$text = $dom->saveHTML();
+	
 	$text = preg_replace(
 	  array(
 	  	// Remove invisible content
+	  	'@<meta[^>]*?>@siu',
 	  	'@<link[^>]*?>@siu',
+	  	'@<form[^>]*?>.*?</form>@siu',
 	    '@<style[^>]*?>.*?</style>@siu',
 	    '@<script[^>]*?.*?</script>@siu',
 	    '@<object[^>]*?.*?</object>@siu',
@@ -205,14 +265,19 @@ function websitez_filter_basic_page($html){
 	    '@</?((frameset)|(frame)|(iframe))@iu',
 	  ),
 	  array(
-	    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
 	    "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
 	    "\n\$0", "\n\$0",
 	  ),
-	  $html );
-	  //If it is a websitez template, run the basic device stylesheet
-	  if($websitez_preinstalled_templates == true)
-	  	$text = str_replace("</head>","<link rel='stylesheet' href='".get_bloginfo('stylesheet_directory')."/basic-device.css' />\n</head>\n",$text);
+	  $text );
+  //If it is a websitez template, run the basic device stylesheet
+  if($websitez_preinstalled_templates == "true")
+  	$text = str_replace("</head>","<link rel='stylesheet' href='".get_bloginfo('stylesheet_directory')."/basic-device.css' />\n</head>\n",$text);
+	
+	$text = preg_replace('/\s\s+/', '', $text);
+  $text = preg_replace('/<!--(.*?)-->/', '', $text);
+  $text = preg_replace('/\n/', '', $text);
+		
 	return $text;
 }
 
@@ -269,17 +334,14 @@ function websitez_check_and_act_mobile(){
 	if($mobile_device['status'] == true || $mobile_device['status'] == "1"){
 		//Record a mobile visit only on the regular site and if it is enabled
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
-		if($websitez_record_stats == "true" && is_feed() == false && is_admin() == false){
-			try{
-				$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
-			}catch (Exception $e){
-				//Do nothing
-			}
+		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
+		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
+			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
 
 		if($mobile_device['type'] == "2"){ //Standard device
 			$option = get_option(WEBSITEZ_BASIC_THEME);
-			if(($websitez_preinstalled_templates == false && is_dir(ABSPATH.'/wp-content/themes/'.$option)) || ($websitez_preinstalled_templates == true && is_dir(WEBSITEZ_PLUGIN_DIR.'/themes/'.$option)) && strlen($option) > 0) {
+			if(($websitez_preinstalled_templates == "false" && is_dir(ABSPATH.'/wp-content/themes/'.$option)) || ($websitez_preinstalled_templates == "true" && is_dir(WEBSITEZ_PLUGIN_DIR.'/themes/'.$option)) && strlen($option) > 0) {
 				//This logic switches the theme and modifies the head/footer to give the user the ability to switch back to the full site
 				websitez_setTheme($option);
 				//This will remove all scripts, stylesheets, and advanced HTML from the page
@@ -291,7 +353,7 @@ function websitez_check_and_act_mobile(){
 			}
 		}else if($mobile_device['type'] == "1"){ //Smart device
 			$option = get_option(WEBSITEZ_ADVANCED_THEME);
-			if(($websitez_preinstalled_templates == false && is_dir(ABSPATH.'/wp-content/themes/'.$option)) || ($websitez_preinstalled_templates == true && is_dir(WEBSITEZ_PLUGIN_DIR.'/themes/'.$option)) && strlen($option) > 0) {
+			if(($websitez_preinstalled_templates == "false" && is_dir(ABSPATH.'/wp-content/themes/'.$option)) || ($websitez_preinstalled_templates == "true" && is_dir(WEBSITEZ_PLUGIN_DIR.'/themes/'.$option)) && strlen($option) > 0) {
 				//This logic switches the theme and modifies the head/footer to give the user the ability to switch back to the full site
 				websitez_setTheme($option);
 				add_action('wp', 'websitez_advanced_buffer', 10, 0);
@@ -311,7 +373,8 @@ function websitez_check_and_act_mobile(){
 	}else{
 		//If it is the free version, add attribution
 		if($websitez_free_version == true){
-			add_action('wp_footer', 'websitez_web_footer_standard');
+			//Removing this link for now
+			//add_action('wp_footer', 'websitez_web_footer_standard');
 		}
 		//This means it is not a mobile device
 	}
@@ -529,9 +592,9 @@ function websitez_check_previous_detection(){
 Return the current themes in wp-content/themes
 */
 function websitez_get_current_themes(){
-	global $websitez_preinstalled_templates;
+	$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 	
-	if($websitez_preinstalled_templates == true){
+	if($websitez_preinstalled_templates == "true"){
 		$path = WEBSITEZ_PLUGIN_DIR.'/themes';
 		return $wp_themes = websitez_get_themes($path);
 	}else{
@@ -550,10 +613,17 @@ function websitez_get_mobile_types(){
 }
 
 function websitez_get_themes($path) {
-	global $wp_themes, $wp_broken_themes;
+	global $wp_themes, $wp_broken_themes, $wp_theme_directories;
 
-	/* Register the default root as a theme directory */
-	register_theme_directory( $path );
+	/*
+	Register the default root as a theme directory 
+	This was working, but occasionally would load the regular themes in the wp-content/themes
+	Oddly enough this seemed to be sporadic.
+	*/
+	//register_theme_directory( $path );
+	
+	//Empty out the directory array and add the plugin dir
+	$wp_theme_directories = array($path);
 
 	if ( !$theme_files = search_theme_directories() )
 		return false;
