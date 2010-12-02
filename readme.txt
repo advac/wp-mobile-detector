@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.0.2
-Stable tag: 1.6.6
+Stable tag: 1.7
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -53,14 +53,10 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 
 == Changelog ==
 
-= 1.6.6 =
+= 1.7 =
 
-+ Added Durden Mobile screenshot
 + Fixed long header title overflow issue
-+ Tested compatibility with latest WordPress
-
-= 1.6.5 =
-
++ Tested compatibility with latest WordPress 3.0.2
 + Confirmed to be compatible with most other mobile detection plugins
 + Fixed PHP notice that cookie had not been set yet
 + Added Durden Mobile WordPress Theme
