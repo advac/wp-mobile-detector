@@ -404,11 +404,11 @@ Attribution and ability to switch between mobile and full site
 function websitez_web_footer(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
-		echo "<div class='websitez_footer'>\n
+		echo "<div class='websitez-footer'>\n
 	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
 	</div>\n";
 	}else{
-		echo "<div class='websitez_footer'>\n
+		echo "<div class='websitez-footer'>\n
 	<p><a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
 	</div>\n";
 	}
@@ -420,11 +420,11 @@ Attribution and ability to switch between mobile and full site
 function websitez_web_footer_mobile(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
-		echo "<div class='websitez_footer_mobile'>\n
+		echo "<div class='websitez-footer-mobile'>\n
 	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
 	</div>\n";
 	}else{
-		echo "<div class='websitez_footer_mobile'>\n
+		echo "<div class='websitez-footer-mobile'>\n
 	<p><a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
 	</div>\n";
 	}
@@ -575,7 +575,7 @@ function websitez_set_previous_detection($status,$type){
 Check to see if this mobile device has been previously detected
 */
 function websitez_check_previous_detection(){
-	if(isset($_COOKIE['websitez_mobile_detector_fullsite'])){
+	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE['websitez_mobile_detector'])){
 		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
 		//Returning a 0 will show the desktop version aka the 'fullsite'
 		//This is executed if the user elected to view the 'fullsite' version

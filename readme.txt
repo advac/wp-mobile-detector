@@ -4,19 +4,21 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
 == Description ==
 
-The WP Mobile Detector wordpress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each.
+The WP Mobile Detector WordPress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible WordPress mobile theme for each.
 
 It is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
 The WP Mobile Detector plugin also includes an installer that will configure everything automatically. All you have to do is install and activate the plugin.
 
 Included in this plugin is the Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, and Viper Mobile advanced mobile themes, all featuring the jQuery mobile framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
+
+This plugin is compatible with most other mobile detection plugins. Use the WP Mobile Detector to ensure that you're detecting as many mobile devices as possible.
 
 * Automatic detection of mobile devices.
 * Differentiates between standard mobile devices and advanced mobile devices.
@@ -49,6 +51,13 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 8. Viper Mobile Theme
 
 == Changelog ==
+
+= 1.6.5 =
+
++ Confirmed to be compatible with most other mobile detection plugins
++ Fixed PHP notice that cookie had not been set yet
++ Added Durden Mobile WordPress Theme
++ Fixed bug on statistics page for 'Last 7 Days' and 'Month-To-Date'
 
 = 1.6.4 =
 

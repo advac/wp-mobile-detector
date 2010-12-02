@@ -1,7 +1,8 @@
 <?
 //Make sure that we're displaying statistics according to the timezone
 //set for each individual wordpress install
-date_default_timezone_set(get_option('timezone_string'));
+if(function_exists('date_default_timezone_set'))
+	date_default_timezone_set(get_option('timezone_string'));
 add_action('admin_head', 'websitez_admin_head');
 
 function websitez_admin_head()
@@ -52,35 +53,32 @@ function websitez_stats_page(){
 				$visitors = array();
 	      if(isset($_GET['type']) && $_GET['type'] == "mtd"){
 	      	$report_title = "Mobile Visits Month To Date";
-	      	$end_num = date("d");
+	      	$end_num = date("j");
 	      	$length = $end_num-1;
 	      	$begin_num = "1";
-	      	$start_date = date("Y-m-".$begin_num." 00:00:00");
-	      	$end_date = date("Y-m-d 23:59:59");
+	      	$start_date = date("Y-m-1 00:00:00");
+	      	$end_date = date("Y-m-j 23:59:59");
 	      	for($i=$begin_num;$i<=$end_num;$i++){
 	      		$chart_this[date("m")."/".$i] = array();
 	      	}
 	      }else if(isset($_GET['type']) && $_GET['type'] == "7day"){
-	      	//Default Show last 7 days
 	      	$report_title = "Mobile Visits Last 7 Days";
-	      	$end_num = date("d");
 	      	$length = 6;
-	      	$begin_num = $end_num - $length;
-	      	$start_date = date("Y-m-".$begin_num." 00:00:00");
-	      	$end_date = date("Y-m-d 23:59:59");
-	      	for($i=$begin_num;$i<=$end_num;$i++){
-	      		$chart_this[date("m")."/".$i] = array();
+	      	$start_date = date("Y-m-j 00:00:00", strtotime("-".$length." days"));
+	      	$end_date = date("Y-m-j 23:59:59");
+	      	for($i=$length;$i>=0;$i--){
+	      		$chart_this[date("m/j", strtotime("-".$i." days"))] = array();
 	      	}
 	      }else{
 	      	$report_title = "Mobile Visits Today";
-	      	$end_num = date("d");
+	      	$end_num = date("j");
 	      	$length = 0;
 	      	$begin_num = $end_num;
-	      	$start_date = date("Y-m-d 00:00:00", strtotime("-".$length." days"));
-	      	$end_date = date("Y-m-d 23:59:59");
+	      	$start_date = date("Y-m-j 00:00:00", strtotime("-".$length." days"));
+	      	$end_date = date("Y-m-j 23:59:59");
 	      	$chart_this[date("m")."/".$end_num] = array();
 	      }
-	      //TODO FIX TIMEZONE ISSUE WITH WORDPRESS OFFSET
+
 				$results = $wpdb->get_results("SELECT * FROM ".WEBSITEZ_STATS_TABLE." WHERE created_at BETWEEN '".$start_date."' AND '".$end_date."' ORDER BY created_at DESC");
 				if(count($results) > 0){
 					//Put each unique visitor into an array
@@ -112,7 +110,7 @@ function websitez_stats_page(){
 						//Create the array to put into the chart
 						if(count($unique_visit['visits']) > 0){
 							foreach($unique_visit['visits'] as $unique_visit_date):
-								$day = date("m/d", strtotime($unique_visit_date));
+								$day = date("m/j", strtotime($unique_visit_date));
 								if(!array_key_exists($day,$chart_this)){
 									$chart_this[$day][$type] = 1;
 									break;
