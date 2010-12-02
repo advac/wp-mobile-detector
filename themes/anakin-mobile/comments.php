@@ -1,5 +1,5 @@
 
-    <?php if (comments_open()) : ?>
+    <?php if ('open' == $post->comment_status) : ?>
     <div class="wrapper">
 		<div class="ui-body ui-body-a ">
     <h2 id="respond">Leave a Comment</h2>
@@ -75,7 +75,7 @@
 
     ?>
 
-    <?php if (have_comments()) : ?>
+    <?php if ($comments) : ?>
 
     <h3 style="padding: 15px 0px 5px;"><?php comments_number('No Comments', '1 Comment', '% Comments' );?> to &#8220;<?php the_title(); ?>&#8221;</h3>
     
