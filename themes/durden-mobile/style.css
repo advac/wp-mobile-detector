@@ -174,23 +174,21 @@ a:link, a:visited{
 }
 
 .websitez-header{
-	/*background-color: #ffffff;*/
-	background: url("images/websitez-header-bg.png") repeat-x;
+	background: #ffffff url("images/websitez-header-bg.png") repeat-x;
 	-webkit-box-shadow:#333333 1px 1px 5px;
-	height: 40px;
 	border-bottom: 1px solid #999999;
 }
 
 .websitez-header-left{
 	height: 40px;
 	width: 38px;
-	background-color: #ffffff;
 	background: url("images/back-arrow.png") no-repeat;
 	background-position: 5px 6px;
 }
 
 .websitez-header .logo{
-	padding-top: 8px;
+	margin: 0px 35px;
+	padding: 8px 0px;
 	display: block;
 	overflow: hidden;
 	font-weight: bold;
