@@ -53,7 +53,7 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 
 == Changelog ==
 
-= 1.7 =
+= 1.6.5 =
 
 + Fixed long header title overflow issue
 + Tested compatibility with latest WordPress 3.0.2
