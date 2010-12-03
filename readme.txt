@@ -50,7 +50,7 @@ Please set permissions for the 'cache' folder located inside of the 'plugins/wp-
 1. WordPress Administration Settings
 2. Advanced Mobile Statistics
 3. Advanced Visitor Details
-4. Durden Mobile Theme
+4. Jester Mobile Theme
 5. Casper Mobile Theme
 6. Colbalt Mobile Theme
 7. Mojo Mobile Theme
