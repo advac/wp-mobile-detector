@@ -55,7 +55,7 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 
 = 1.6.5 =
 
-+ Fixed long header title overflow issue
++ Fixed long header title overflow issue.
 + Tested compatibility with latest WordPress 3.0.2
 + Confirmed to be compatible with most other mobile detection plugins
 + Fixed PHP notice that cookie had not been set yet
