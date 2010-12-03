@@ -39,6 +39,12 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 
 Please try deactivating and reactivating the plugin. If that does not work, please contact support@websitez.com and we will help you get the plugin installed.
 
+= Images are not showing for advanced mobile devices =
+
+This is most likely due to folder permissions being incorrect.
+
+Please set permissions for the 'cache' folder located inside of the 'plugins/wp-mobile-detector' folder to 777.
+
 == Screenshots ==
 
 1. WordPress Administration Settings
@@ -55,12 +61,13 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 
 = 1.6.5 =
 
-+ Fixed long header title overflow issue
++ Fixed long header title overflow issue.
 + Tested compatibility with latest WordPress 3.0.2
 + Confirmed to be compatible with most other mobile detection plugins
 + Fixed PHP notice that cookie had not been set yet
 + Added Durden Mobile WordPress Theme
 + Fixed bug on statistics page for 'Last 7 Days' and 'Month-To-Date'
++ Added fix for undefined function 'search_theme_directories'
 
 = 1.6.4 =
 

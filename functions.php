@@ -625,7 +625,7 @@ function websitez_get_themes($path) {
 	//Empty out the directory array and add the plugin dir
 	$wp_theme_directories = array($path);
 
-	if ( !$theme_files = search_theme_directories() )
+	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories())
 		return false;
 
 	asort( $theme_files );
@@ -795,7 +795,7 @@ function websitez_get_themes($path) {
 	unset($theme_files);
 
 	/* Store theme roots in the DB */
-	if ( get_site_transient( 'theme_roots' ) != $theme_roots )
+	if ( function_exists('get_site_transient') && get_site_transient( 'theme_roots' ) != $theme_roots )
 		set_site_transient( 'theme_roots', $theme_roots, 7200 ); // cache for two hours
 	unset($theme_roots);
 
