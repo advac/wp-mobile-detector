@@ -625,7 +625,7 @@ function websitez_get_themes($path) {
 	//Empty out the directory array and add the plugin dir
 	$wp_theme_directories = array($path);
 
-	if ( !$theme_files = search_theme_directories() )
+	if (function_exists('search_theme_directories') && !$theme_files = search_theme_directories())
 		return false;
 
 	asort( $theme_files );

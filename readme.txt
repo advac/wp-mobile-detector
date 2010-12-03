@@ -61,6 +61,7 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 + Fixed PHP notice that cookie had not been set yet
 + Added Durden Mobile WordPress Theme
 + Fixed bug on statistics page for 'Last 7 Days' and 'Month-To-Date'
++ Added fix for undefined function 'search_theme_directories'
 
 = 1.6.4 =
 
