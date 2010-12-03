@@ -39,6 +39,12 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 
 Please try deactivating and reactivating the plugin. If that does not work, please contact support@websitez.com and we will help you get the plugin installed.
 
+= Images are not showing for advanced mobile devices =
+
+This is most likely due to folder permissions being incorrect.
+
+Please set permissions for the 'cache' folder located inside of the 'plugins/wp-mobile-detector' folder to 777.
+
 == Screenshots ==
 
 1. WordPress Administration Settings

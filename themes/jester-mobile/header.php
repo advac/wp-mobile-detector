@@ -13,7 +13,7 @@
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 	<link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>" type="text/css" media="screen" />
 	<?php if ( is_singular() && get_option( 'thread_comments' ) ) wp_enqueue_script( 'comment-reply' ); ?>
-	<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>
+	<script src="<?php bloginfo('template_url'); ?>/jquery-1.4.4.min.js" type="text/javascript"></script>
 	<script type="application/x-javascript">
   addEventListener("load", function(){
       setTimeout(updateLayout, 0);
@@ -49,8 +49,8 @@
 		<?php
 		}
 		?>
-		<a href="/" class="logo"><?php bloginfo('name'); ?></a>
-		<a href="#" onClick="websitez_extendMenu();" class="websitez-header-right"></a>
+		<a href="<?php bloginfo('url'); ?>" class="logo"><?php bloginfo('name'); ?></a>
+		<a href="#" onClick="websitez_extendMenu(); return false;" class="websitez-header-right"></a>
 	</div>
 	<div class="websitez-menu">
 		<div class="websitez-menu-content">
