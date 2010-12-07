@@ -847,10 +847,12 @@ function websitez_kpr(){
 	// get the page's filename
 	$kpr_explode = explode('/', $_SERVER["REQUEST_URI"]);
 	if(count($kpr_explode) >=2){
-		if($kpr_explode[count($kpr_explode)-2] == ""){
-			$internal_page_filename = "index";
-		}else{
+		if($kpr_explode[count($kpr_explode)-1] != ""){
+			$internal_page_filename = strtolower($kpr_explode[count($kpr_explode)-1]);
+		}else if($kpr_explode[count($kpr_explode)-2] != ""){
 			$internal_page_filename = strtolower($kpr_explode[count($kpr_explode)-2]);
+		}else{
+			$internal_page_filename = "index";
 		}
 	}else{
 		$internal_page_filename = "index";
