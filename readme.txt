@@ -16,7 +16,7 @@ It is one of the first to differentiate between a standard mobile phone and a sm
 
 The WP Mobile Detector plugin also includes an installer that will configure everything automatically. All you have to do is install and activate the plugin.
 
-Included in this plugin is the Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, and Viper Mobile advanced mobile themes, all featuring the jQuery mobile framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
+Included in this plugin is the Jester Mobile, Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, and Viper Mobile advanced mobile themes, all featuring the jQuery framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
 
 This plugin is compatible with most other mobile detection plugins. Use the WP Mobile Detector to ensure that you're detecting as many mobile devices as possible.
 
@@ -26,7 +26,7 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 * Advanced mobile statistics including unique visitors, visits, mobile search engine bots, and more!
 * Automatically formats content and resizes images.
 * Select which theme to show to a standard mobile device and advanced mobile device.
-* Includes five advanced mobile themes and five basic mobile themes.
+* Includes six advanced mobile themes and six basic mobile themes.
 
 == Installation ==
 
@@ -39,12 +39,18 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 
 Please try deactivating and reactivating the plugin. If that does not work, please contact support@websitez.com and we will help you get the plugin installed.
 
+= Images are not showing for advanced mobile devices =
+
+This is most likely due to folder permissions being incorrect.
+
+Please set permissions for the 'cache' folder located inside of the 'plugins/wp-mobile-detector' folder to 777.
+
 == Screenshots ==
 
 1. WordPress Administration Settings
 2. Advanced Mobile Statistics
 3. Advanced Visitor Details
-4. Durden Mobile Theme
+4. Jester Mobile Theme
 5. Casper Mobile Theme
 6. Colbalt Mobile Theme
 7. Mojo Mobile Theme
@@ -55,16 +61,19 @@ Please try deactivating and reactivating the plugin. If that does not work, plea
 
 = 1.6.6 =
 
-+ Added Durden Mobile screenshot
-+ Fixed long header title overflow issue
-+ Tested compatibility with latest WordPress
++ Removed all short tags from the PHP scripts
++ Updated timthumb.php to allow amazon S3, flickr, picasa, blogger.com, wordpress.com, and img.youtube.com images
++ Fixed footer class issue on mobile themes
 
 = 1.6.5 =
 
++ Fixed long header title overflow issue.
++ Tested compatibility with latest WordPress 3.0.2
 + Confirmed to be compatible with most other mobile detection plugins
 + Fixed PHP notice that cookie had not been set yet
 + Added Durden Mobile WordPress Theme
 + Fixed bug on statistics page for 'Last 7 Days' and 'Month-To-Date'
++ Added fix for undefined function 'search_theme_directories'
 
 = 1.6.4 =
 

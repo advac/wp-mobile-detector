@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 Insert proper meta tags for caching and attribution
 */
@@ -393,9 +393,7 @@ function websitez_filterContentAdvanced($content){
 }
 
 function websitez_web_footer_standard(){
-	echo "<div style='font-size: 1em; text-align: center; padding: 4px 0px;'>\n
-	<p><a href='http://websitez.com' target='_blank' title='WordPress Mobile' rel='external'>WordPress Mobile</a></p>\n
-	</div>\n";
+	echo "<div class='websitez-footer' style='font-size: 1em; text-align: center; padding: 4px 0px;'>\n<p>".websitez_kpr()."</p>\n</div>\n";
 }
 
 /*
@@ -405,7 +403,7 @@ function websitez_web_footer(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
 		echo "<div class='websitez-footer'>\n
-	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
+	<p>".websitez_kpr()."&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
 	</div>\n";
 	}else{
 		echo "<div class='websitez-footer'>\n
@@ -421,7 +419,7 @@ function websitez_web_footer_mobile(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
 		echo "<div class='websitez-footer-mobile'>\n
-	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
+	<p>".websitez_kpr()."&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
 	</div>\n";
 	}else{
 		echo "<div class='websitez-footer-mobile'>\n
@@ -568,7 +566,8 @@ function websitez_detect_mobile_device(){
 If it is a mobile device, lets try and remember to avoid having to detect it again
 */
 function websitez_set_previous_detection($status,$type){
-	setcookie("websitez_mobile_detector", $status."|".$type, time()+3600, "/");
+	if(!isset($_COOKIE['websitez_mobile_detector']))
+		setcookie("websitez_mobile_detector", $status."|".$type, time()+3600, "/");
 }
 
 /*
@@ -625,7 +624,7 @@ function websitez_get_themes($path) {
 	//Empty out the directory array and add the plugin dir
 	$wp_theme_directories = array($path);
 
-	if ( !$theme_files = search_theme_directories() )
+	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories())
 		return false;
 
 	asort( $theme_files );
@@ -795,7 +794,7 @@ function websitez_get_themes($path) {
 	unset($theme_files);
 
 	/* Store theme roots in the DB */
-	if ( get_site_transient( 'theme_roots' ) != $theme_roots )
+	if ( function_exists('get_site_transient') && get_site_transient( 'theme_roots' ) != $theme_roots )
 		set_site_transient( 'theme_roots', $theme_roots, 7200 ); // cache for two hours
 	unset($theme_roots);
 
@@ -814,5 +813,97 @@ function websitez_get_themes($path) {
 	}
 
 	return $wp_themes;
+}
+
+/*
+Will return a link to place depending on first char of the page filename
+*/
+function websitez_kpr(){
+	// phrase 3 should be your primary keyphrase, as it will come up with index.html
+	
+	$kpr_phrase = array(
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //0
+		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //1
+		'<a href="http://websitez.com/products-page/featured/wordpress-mobile-plugin/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //3
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //4
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //5
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile Plugins</a>', //6
+		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //8
+		'<a href="http://websitez.com" title="WordPress Mobile Plugins">WordPress Mobile Plugins</a>', //9
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //10
+	);
+	##############################
+	# DO NOT EDIT BELOW THIS LINE
+	##############################
+
+	// unset variables to get a clean start
+	unset($kpr_explode);
+	unset($internal_page_filename);
+	unset($kpr_char);
+	unset($kpr_num);
+
+	// get the page's filename
+	$kpr_explode = explode('/', $_SERVER["REQUEST_URI"]);
+	if(count($kpr_explode) >=2){
+		if($kpr_explode[count($kpr_explode)-2] == ""){
+			$internal_page_filename = "index";
+		}else{
+			$internal_page_filename = strtolower($kpr_explode[count($kpr_explode)-2]);
+		}
+	}else{
+		$internal_page_filename = "index";
+	}
+
+	// get the first letter of the page's filename and convert it to ascii
+	$kpr_char = substr($internal_page_filename, 0, 1);
+	$kpr_num = ord($kpr_char);
+
+	// display the appropriate phrase
+	if ($kpr_num <= 96) // caps, numbers, some punctuation, and most non printable chars
+	{
+		return $kpr_phrase[0];
+	}
+	else if ( ($kpr_num >= 97) && ($kpr_num <= 99) ) // a - c
+	{
+		return $kpr_phrase[1];
+	}
+	else if ( ($kpr_num >= 100) && ($kpr_num <= 102) ) // d - f
+	{
+		return $kpr_phrase[2];
+	}
+	else if ( ($kpr_num >= 103) && ($kpr_num <= 105) ) // g - i
+	{
+		return $kpr_phrase[3];
+	}
+	else if ( ($kpr_num >= 106) && ($kpr_num <= 108) ) // j - l
+	{
+		return $kpr_phrase[4];
+	}
+	else if ( ($kpr_num >= 109) && ($kpr_num <= 111) ) // m - o
+	{
+		return $kpr_phrase[5];
+	}
+	else if ( ($kpr_num >= 112) && ($kpr_num <= 114) ) // p - r
+	{
+		return $kpr_phrase[6];
+	}
+	else if ( ($kpr_num >= 115) && ($kpr_num <= 117) ) // s - u
+	{
+		return $kpr_phrase[7];
+	}
+	else if ( ($kpr_num >= 118) && ($kpr_num <= 120) ) // v - x
+	{
+		return $kpr_phrase[8];
+	}
+	else if ($kpr_num >= 121) // y +
+	{
+		return $kpr_phrase[9];
+	}
+	else // catchall for anything that slipped through the cracks
+	{
+		return $kpr_phrase[10];
+	}
 }
 ?>

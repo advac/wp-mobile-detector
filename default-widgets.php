@@ -1,4 +1,4 @@
-<?
+<?php
 function websitez_unregister_default_wp_widgets() {
 	unregister_widget('WP_Widget_Pages');
 	unregister_widget('WP_Widget_Calendar');
@@ -147,7 +147,7 @@ class websitez_WP_Widget_Links extends WP_Widget {
 				</div><!-- /collapsible -->
 			</div><!-- /themed container -->
 		</div>
-<?
+<?php
 	}
 
 	function update( $new_instance, $old_instance ) {
