@@ -419,7 +419,8 @@ Comments
 }
 
 .websitez-comments-text{
-
+	padding-top: 0px;
+	margin-top: 0px;
 }
 
 .websitez-comments-reply{

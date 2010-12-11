@@ -7,7 +7,7 @@ add_action('admin_head', 'websitez_admin_head');
 
 function websitez_admin_head()
 {
-	echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
+	//echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
 }
 
 /*
@@ -17,6 +17,7 @@ function websitez_configuration_menu(){
 	add_menu_page( __( WEBSITEZ_PLUGIN_NAME, 'Websitez' ), __( '<span style="font-size:12px;">'.__(WEBSITEZ_PLUGIN_NAME).'</span>', 'Websitez' ), 8, 'websitez_config', 'websitez_configuration_page',plugin_dir_url(__FILE__).'images/phone_icon_16x16.png');
 	add_submenu_page( 'websitez_config', __('Settings', 'Websitez'), __('Settings', 'Websitez'), 8, 'websitez_config', 'websitez_configuration_page' );
 	add_submenu_page( 'websitez_config', __('Stats', 'Websitez'), __('Stats', 'Websitez'), 8, 'websitez_stats', 'websitez_stats_page' );
+	add_submenu_page( 'websitez_config', __('Mobile Themes', 'Websitez'), __('Mobile Themes', 'Websitez'), 8, 'websitez_themes', 'websitez_themes_page' );
 }
 
 function websitez_stats_page(){
@@ -241,7 +242,7 @@ function websitez_configuration_page()
 		<tr>
 			<td width="60%" valign="top">
 				<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?></h1>
-				<p><?php _e('Configure which theme to show to each mobile device.') ?></p>
+				<p><?php _e('Configure the settings for the WP Mobile Detector plugin.') ?></p>
 			</td>
 			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
 				<p><a href="http://ready.mobi/results.jsp?uri=<?php echo bloginfo('url'); ?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?php echo plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
@@ -311,11 +312,11 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
-	}else if(isset($_POST['use_preinstalled_themes'])){
-		$value = $_POST['use_preinstalled_themes'];
+	}else if(isset($_POST['show_attribution'])){
+		$value = $_POST['show_attribution'];
 		
-		if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
-			if(update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, $value)){
+		if(get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME)){
+			if(update_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME, $value)){
 				$u = true;
 			}else{
 				$u = false;
@@ -328,50 +329,15 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
-		
 	}
 	
 	//Now that the settings are saved, get the themes
 	$current_themes_installed = websitez_get_current_themes();
 ?>
-		<table class="widefat post fixed" cellspacing="0">
-			<thead>
-				<tr>
-					<th class="manage-column" scope="col" width="180">Phone Type</th>
-					<th class="manage-column" scope="col" width="250">Mobile Theme</th>
-					<?/*<th class="manage-column" scope="col" width="370">Redirect URL</th>*/?>
-					<th class="manage-column" scope="col">Operation</th>
-				</tr>
-			</thead>
-			<form method="post" action="">
-		<?php $mobile_types = websitez_get_mobile_types(); foreach($mobile_types as $type): ?>
-			<?php
-			$option = get_option($type['option']);
-			$redirect = get_option($type['url_redirect']);
-			?>
-			<form method="post" action="">
-				<input type="hidden" name="action" value="<?php echo $type['option']; ?>">
-			<tr valign="top" class="author-self status-publish iedit">
-				<th scope="row"><?php _e($type['name']) ?></th>
-				<td>
-					<select name="<?php echo $type['option']; ?>" class="theme_template">
-							<option name="theme_template" value="<?php echo WEBSITEZ_DEFAULT_THEME; ?>">Please select a mobile theme...</option>
-							<?php foreach($current_themes_installed as $name => $mobile_theme): ?>
-							<option name="theme_template" value="<?php echo $mobile_theme['Template']; ?>" <?php if($option==$mobile_theme['Template']) echo 'selected="selected"'; ?>><?php _e($name); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</td>
-				<?php/*<td><input type="hidden" name="url_field" value="<?php $type['url_redirect']; ?>"><input type="text" name="redirect_url" value="<?php echo $redirect; ?>" size="40"></td>*/?>
-				<td>
-					<input type="submit" class="button submit" value="Update">
-				</td>
-			</tr>
-		</form>
-		<?php $i++; endforeach; ?>
-		</table>
+
 		<?php
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
-		$websitez_use_preinstalled_themes = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
+		$websitez_show_attribution = get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME);
 		?>
 		<form action="" method="POST">
 		<div style="margin:10px 0;">
@@ -401,15 +367,15 @@ function websitez_configuration_page()
 			<table class="widefat post fixed" cellspacing="0">
 				<thead>
 					<tr>
-						<th class="manage-column" scope="col" width="445">Use pre-installed themes?</th>
+						<th class="manage-column" scope="col" width="445">Give credit to WP Mobile Detector with a footer link?</th>
 						<th class="manage-column" scope="col">Operation</th>
 					</tr>
 				</thead>
 				<tr valign="top" class="author-self status-publish iedit">
 					<td>
-						<select name="use_preinstalled_themes" class="theme_template" style="width: 100px;">
-								<option value="true" <?php if($websitez_use_preinstalled_themes == "true") echo "selected";?>><?php _e('Yes'); ?></option>
-								<option value="false" <?php if($websitez_use_preinstalled_themes == "false") echo "selected";?>><?php _e('No'); ?></option>
+						<select name="show_attribution" class="theme_template" style="width: 100px;">
+								<option value="true" <?php if($websitez_show_attribution == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <?php if($websitez_show_attribution == "false") echo "selected";?>><?php _e('No'); ?></option>
 						</select>
 					</td>
 					<td>

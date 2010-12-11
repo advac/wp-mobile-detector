@@ -43,7 +43,7 @@
 	<a name="top"></a>
 	<div class="websitez-header">
 		<?php
-		if($_SERVER['REQUEST_URI'] != "/"){
+		if("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] != get_bloginfo('url')."/"){
 		?>
 		<a href="" onClick="history.go(-1); return false;"><div class="websitez-header-left"></div></a>
 		<?php

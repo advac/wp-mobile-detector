@@ -84,6 +84,9 @@ function websitez_install(){
 		
 		if(!get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME))
 			add_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, WEBSITEZ_USE_PREINSTALLED_THEMES, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME))
+			add_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME, WEBSITEZ_SHOW_ATTRIBUTION, '', 'yes');
 			
 		if(!get_option(WEBSITEZ_BASIC_THEME)){
 			if(WEBSITEZ_USE_PREINSTALLED_THEMES == "true")
@@ -372,9 +375,8 @@ function websitez_check_and_act_mobile(){
 		}
 	}else{
 		//If it is the free version, add attribution
-		if($websitez_free_version == true){
-			//Removing this link for now
-			//add_action('wp_footer', 'websitez_web_footer_standard');
+		if(get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME) == "true"){
+			add_action('wp_footer', 'websitez_web_footer_standard');
 		}
 		//This means it is not a mobile device
 	}
@@ -611,7 +613,7 @@ function websitez_get_mobile_types(){
 	return array(array('name'=>'Basic Mobile Device','option'=>WEBSITEZ_BASIC_THEME,'url_redirect'=>WEBSITEZ_BASIC_URL_REDIRECT),array('name'=>'Advanced Mobile Device','option'=>WEBSITEZ_ADVANCED_THEME,'url_redirect'=>WEBSITEZ_ADVANCED_URL_REDIRECT));
 }
 
-function websitez_get_themes($path) {
+function websitez_get_themes($path = null, $only_mobile = false) {
 	global $wp_themes, $wp_broken_themes, $wp_theme_directories;
 
 	/*
@@ -622,7 +624,10 @@ function websitez_get_themes($path) {
 	//register_theme_directory( $path );
 	
 	//Empty out the directory array and add the plugin dir
-	$wp_theme_directories = array($path);
+	if($only_mobile == true){
+		$current_theme_directories = $wp_theme_directories;
+		$wp_theme_directories = array($path);
+	}
 
 	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories())
 		return false;
@@ -811,7 +816,12 @@ function websitez_get_themes($path) {
 			}
 		}
 	}
-
+	
+	//Empty out the directory array and add the plugin dir
+	if($only_mobile == true){
+		$wp_theme_directories = $current_theme_directories;
+	}
+	
 	return $wp_themes;
 }
 
