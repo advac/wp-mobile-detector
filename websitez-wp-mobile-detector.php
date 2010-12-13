@@ -1,10 +1,10 @@
-<?
+<?php
 /**
  Plugin Name: WP Mobile Detector
  Plugin URI: http://www.websitez.com/
  Description: The WP Mobile Detector wordpress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each. This plugin is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
- Version: 1.6.4
+ Version: 1.6.6
  Author: Websitez.com
  Author URI: http://www.websitez.com
 */
@@ -33,6 +33,8 @@ define('WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH', '250');
 define('WEBSITEZ_STATS_TABLE', $table_prefix.'websitez_stats');
 define('WEBSITEZ_RECORD_STATS_NAME', 'websitez_record_stats');
 define('WEBSITEZ_RECORD_STATS', "true");
+define('WEBSITEZ_SHOW_ATTRIBUTION_NAME', 'websitez_show_attribution');
+define('WEBSITEZ_SHOW_ATTRIBUTION', "false");
 define('WEBSITEZ_USE_PREINSTALLED_THEMES', "true");
 define('WEBSITEZ_USE_PREINSTALLED_THEMES_NAME', "websitez_preinstalled_themes");
 define('WEBSITEZ_BASIC_URL_REDIRECT', 'websitez_basic_url_redirect');
@@ -40,7 +42,7 @@ define('WEBSITEZ_ADVANCED_URL_REDIRECT', 'websitez_advanced_url_redirect');
 
 //Does this plugin come with pre-installed templates?
 global $websitez_preinstalled_templates;
-$websitez_preinstalled_templates = "true";
+$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 
 // Install plugin
 if(function_exists('register_activation_hook')) {
@@ -49,6 +51,7 @@ if(function_exists('register_activation_hook')) {
 
 if(is_admin()) {
 	require(dirname(__FILE__) . '/admin/admin-page.php');
+	require(dirname(__FILE__) . '/admin/themes.php');
 	add_action('admin_menu', 'websitez_configuration_menu');
 	//Check to make sure plugin is installed properly
 	add_action('init', 'websitez_checkInstalled');
