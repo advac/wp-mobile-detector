@@ -1,5 +1,5 @@
 === WP Mobile Detector ===
-Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, ipad
+Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, ipad, mobile website
 Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
@@ -25,12 +25,12 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 * Detects over 5,000+ mobile devices.
 * Advanced mobile statistics including unique visitors, visits, mobile search engine bots, and more!
 * Automatically formats content and resizes images.
-* Select which theme to show to a standard mobile device and advanced mobile device.
-* Includes six advanced mobile themes and six basic mobile themes.
+* Includes seven mobile themes pre-installed.
+* Select any of the seven pre-installed mobile themes or choose one of your own.
 
 == Installation ==
 
-1. Unzip and place the 'websitez-wp-mobile-detector' folder in your 'wp-content/plugins' directory
+1. Unzip and place the 'wp-mobile-detector' folder in your 'wp-content/plugins' directory
 2. Click the 'Activate' link for WP Mobile Detector on your Plugins page (in the WordPress administration page)
 
 == Frequently Asked Questions ==
@@ -56,13 +56,14 @@ Please set permissions for the 'cache' folder located inside of the 'plugins/wp-
 7. Mojo Mobile Theme
 8. Viper Mobile Theme
 9. Anakin Mobile Theme
+10. Bluesteel Mobile Theme
 
 == Changelog ==
 
 = 1.6.7 =
 
 + Added optional footer link to give credit to plugin author
-+ Added theme page to allow users to select pre-installed themes
++ Added mobile themes page to allow users to select pre-installed themes
 
 = 1.6.6 =
 
