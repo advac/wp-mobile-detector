@@ -63,7 +63,7 @@ Please set permissions for the 'cache' folder located inside of the 'plugins/wp-
 = 1.6.7 =
 
 + Added optional footer link to give credit to plugin author
-+ Added theme page to allow users to select pre-installed themes
++ Added mobile themes page to allow users to select pre-installed themes
 
 = 1.6.6 =
 
