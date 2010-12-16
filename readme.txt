@@ -60,6 +60,10 @@ Please set permissions for the 'cache' folder located inside of the 'plugins/wp-
 
 == Changelog ==
 
+= 1.6.8 =
+
++ Fixed the 'URL file-access is disabled in the server configuration in' error, now using CURL
+
 = 1.6.7 =
 
 + Added optional footer link to give credit to plugin author

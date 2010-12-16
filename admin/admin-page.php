@@ -399,7 +399,11 @@ function websitez_configuration_page()
 Get the dynamic footer remotely
 */
 function websitez_dynamic_footer(){
-	$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
+		//$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
+	else
+		$websitez_footer = "";
 	return $websitez_footer;
 }
 
@@ -407,7 +411,11 @@ function websitez_dynamic_footer(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers(){
-	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/offers.php","");
+		//$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers.php");
+	else
+		$websitez_offers = "";
 	return $websitez_offers;
 }
 
@@ -415,7 +423,36 @@ function websitez_dynamic_offers(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers_stats(){
-	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php","");
+		//$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
+	else
+		$websitez_offers = "";
 	return $websitez_offers;
+}
+
+/*
+Check for CURL
+*/
+function websitez_iscurlinstalled() {
+	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/*
+Perform CURL
+*/
+function websitez_remote_request($host,$path){
+	$fp = curl_init($host);
+	curl_setopt($fp, CURLOPT_POST, true);
+	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
+	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	$page = curl_exec($fp);
+	curl_close($fp);
+	
+	return $page;
 }
 ?>
