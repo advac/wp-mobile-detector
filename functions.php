@@ -489,7 +489,7 @@ function websitez_detect_mobile_device(){
 		/*
 		Start off with smart phones or smart devices
 		*/
-		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)); //iPhone or iPod
+		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)||preg_match('/ipad/i',$user_agent)); //iPhone or iPod
       $mobile_browser = true;
 			$mobile_browser_type = "1"; //Smart Phone
     break;
@@ -567,9 +567,12 @@ function websitez_detect_mobile_device(){
 /*
 If it is a mobile device, lets try and remember to avoid having to detect it again
 */
-function websitez_set_previous_detection($status,$type){
-	if(!isset($_COOKIE['websitez_mobile_detector']))
-		setcookie("websitez_mobile_detector", $status."|".$type, time()+3600, "/");
+function websitez_set_previous_detection($status,$type,$user_agent){
+	if($status){
+		//This is set to prevent caching mechanisms such as W3 total cache from caching the mobile page
+		setcookie("websitez_is_mobile", "true", time()+3600, "/");
+	}
+	setcookie("websitez_mobile_detector", $status."|".$type."|".md5($user_agent), time()+3600, "/");
 }
 
 /*

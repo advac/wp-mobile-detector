@@ -16,7 +16,7 @@ It is one of the first to differentiate between a standard mobile phone and a sm
 
 The WP Mobile Detector plugin also includes an installer that will configure everything automatically. All you have to do is install and activate the plugin.
 
-Included in this plugin is the Jester Mobile, Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, and Viper Mobile advanced mobile themes, all featuring the jQuery framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
+Included in this plugin is the Jester Mobile, Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, Viper Mobile, and Bluesteel Mobile advanced mobile themes, all featuring the jQuery framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
 
 This plugin is compatible with most other mobile detection plugins. Use the WP Mobile Detector to ensure that you're detecting as many mobile devices as possible.
 
@@ -45,6 +45,10 @@ This is most likely due to folder permissions being incorrect.
 
 Please set permissions for the 'cache' folder located inside of the 'plugins/wp-mobile-detector' folder to 777.
 
+= Does this plugin work with the W3 Total Cache plugin? =
+
+Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mobile' in the 'Rejected Cookies' field.
+
 == Screenshots ==
 
 1. WordPress Administration Settings
@@ -63,6 +67,9 @@ Please set permissions for the 'cache' folder located inside of the 'plugins/wp-
 = 1.6.8 =
 
 + Fixed the 'URL file-access is disabled in the server configuration in' error, now using CURL
++ Removed PHP short tags
++ Added support for the iPad
++ W3 Total Cache Support
 
 = 1.6.7 =
 

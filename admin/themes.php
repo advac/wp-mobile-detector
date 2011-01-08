@@ -3,7 +3,10 @@
 function websitez_themes_page(){
 	global $wpdb, $websitez_plugin_description, $table_prefix, $websitez_free_version;
 	
-	$themes_standard = get_allowed_themes();
+	if(function_exists('get_allowed_themes'))
+		$themes_standard = get_allowed_themes();
+	else
+		$themes_standard = get_themes();
 	$path = WEBSITEZ_PLUGIN_DIR.'/themes';
 	$themes_preinstalled = websitez_get_themes($path,true);
 	$themes = array_merge($themes_standard,$themes_preinstalled);
