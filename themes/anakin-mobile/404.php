@@ -16,7 +16,7 @@
                                         <p style="padding-left:20px;"> Please try one of the following:</p>
                                         <ul>
                                             <li>Hit the "back" button on your browser.</li>
-                                            <li>Head on over to the <a href="<?php bloginfo('url'); ?>">front page</a>.</li>
+                                            <li>Head on over to the <a href="<?php echo home_url(); ?>">front page</a>.</li>
                                             <li>Try searching using the form in the sidebar.</li>
                                             <li>Click on a link in the sidebar.</li>
                                             <li>Use the navigation menu at the top of the page.</li>
