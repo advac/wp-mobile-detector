@@ -559,7 +559,7 @@ function websitez_detect_mobile_device(){
 	}
 	
 	//Set a persistent client-side value to avoid having to detect again for this visitor
-	websitez_set_previous_detection($mobile_browser,$mobile_browser_type);
+	websitez_set_previous_detection($mobile_browser,$mobile_browser_type,$user_agent);
 	
 	return array('status'=>$mobile_browser,'type'=>$mobile_browser_type);
 }
