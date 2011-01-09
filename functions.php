@@ -258,6 +258,8 @@ function websitez_filter_basic_page($html){
 			'@<iframe[^>]*?.*?</iframe>@siu',
 	    '@<noscript[^>]*?.*?</noscript>@siu',
 	    '@<noembed[^>]*?.*?</noembed>@siu',
+			// Remove visible content
+			'@<img[^>]*?>@siu',
 	  	// Add line breaks before and after blocks
 	    '@</?((address)|(blockquote)|(center)|(del))@iu',
 	    '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
@@ -268,7 +270,7 @@ function websitez_filter_basic_page($html){
 	    '@</?((frameset)|(frame)|(iframe))@iu',
 	  ),
 	  array(
-	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
 	    "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
 	    "\n\$0", "\n\$0",
 	  ),

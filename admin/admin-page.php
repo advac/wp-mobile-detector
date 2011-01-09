@@ -43,7 +43,7 @@ function websitez_stats_page(){
 	    function drawChart() {
 	      var data = new google.visualization.DataTable();
 	      data.addColumn('string', 'Date');
-	      <?
+	      <?php
 	      //Set some values
 	      $total_googlebot_visits = 0;
 	      $total_bing_bot_visits = 0;
@@ -128,7 +128,7 @@ function websitez_stats_page(){
 				data.addColumn('number', 'Advanced Mobile Device');
 	      data.addColumn('number', 'Basic Mobile Device');
 				data.addRows(<?php echo count($chart_this);?>);
-				<?
+				<?php
 				$j=0;
 				if(count($chart_this) > 0){
 					foreach($chart_this as $day=>$day_data):
@@ -218,7 +218,7 @@ function websitez_stats_page(){
 					<td><?php _e('<p>'.$v['data']['REMOTE_ADDR'].'</p>') ?></td>
 					<td><?php _e('<p>'.$v['data']['HTTP_USER_AGENT'].'</p>') ?></td>
 				</tr>
-				<?
+				<?php
 				endforeach;
 			}
 			?>

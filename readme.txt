@@ -64,6 +64,10 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 
 == Changelog ==
 
+= 1.6.9 =
+
++ Remove images from basic mobile devices
+
 = 1.6.8 =
 
 + Fixed the 'URL file-access is disabled in the server configuration in' error, now using CURL
