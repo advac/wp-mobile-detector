@@ -92,7 +92,7 @@ function websitez_themes_page(){
 		</tr>
 	</table>
 </div>
-<?php if ( !validate_current_theme() ) : ?>
+<?php if ( !validate_current_mobile_theme($ct->template,$ct->template_dir) ) : ?>
 <div id="message1" class="updated"><p><?php _e('The active mobile theme is broken.  Reverting to the default mobile theme.'); ?></p></div>
 <?php elseif ( $activated == true ) :
 ?>
