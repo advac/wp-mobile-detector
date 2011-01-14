@@ -1,5 +1,26 @@
 <?php
 /*
+Validate the mobile theme
+*/
+function validate_current_mobile_theme($template_name = null, $template_path = null) {
+	// Don't validate during an install/upgrade.
+	if ( defined('WP_INSTALLING') || !apply_filters( 'validate_current_theme', true ) )
+		return true;
+
+	if ( $template_name != WP_DEFAULT_THEME && !file_exists($template_path . '/index.php') ) {
+		switch_theme( WEBSITEZ_INSTALL_ADVANCED_THEME, WEBSITEZ_INSTALL_ADVANCED_THEME );
+		return false;
+	}
+
+	if ( $template_name != WP_DEFAULT_THEME && !file_exists($template_path . '/style.css') ) {
+		switch_theme( WEBSITEZ_INSTALL_ADVANCED_THEME, WEBSITEZ_INSTALL_ADVANCED_THEME );
+		return false;
+	}
+
+	return true;
+}
+
+/*
 Insert proper meta tags for caching and attribution
 */
 function websitez_wordpress_generator($generator) {

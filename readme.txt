@@ -74,6 +74,7 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 + Removed PHP short tags
 + Added support for the iPad
 + W3 Total Cache Support
++ Fixed theme validation error with BuddyPress
 
 = 1.6.7 =
 
