@@ -173,31 +173,35 @@ function websitez_advanced_buffer(){
 Filter content for an advanced mobile device
 */
 function websitez_filter_advanced_page($html){
-	//Resize the images on the page
-	$dom = new DOMDocument();
-	$dom->loadHTML($html);
+	if (class_exists('DOMDocument')) {
+		//Resize the images on the page
+		$dom = new DOMDocument();
+		$dom->loadHTML($html);
 	
-	// grab all the on the page and make sure they are the right size
-	$xpath = new DOMXPath($dom);
-	$imgs = $xpath->evaluate("/html/body//img");
+		// grab all the on the page and make sure they are the right size
+		$xpath = new DOMXPath($dom);
+		$imgs = $xpath->evaluate("/html/body//img");
 	
-	for ($i = 0; $i < $imgs->length; $i++) {
-		$img = $imgs->item($i);
-		$src = trim($img->getAttribute('src'));
-		$img->removeAttribute('width');
-		$img->removeAttribute('height');
-		//Use dynamic image resizer link
-		if(strlen($src) > 0){
-			$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
-			list($width, $height) = getimagesize($src);
-			if($width > $max_width){
-				$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$src."&w=".$max_width;
-				$img->setAttribute('src', $resize);
+		for ($i = 0; $i < $imgs->length; $i++) {
+			$img = $imgs->item($i);
+			$src = trim($img->getAttribute('src'));
+			$img->removeAttribute('width');
+			$img->removeAttribute('height');
+			//Use dynamic image resizer link
+			if(strlen($src) > 0){
+				$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
+				list($width, $height) = getimagesize($src);
+				if($width > $max_width){
+					$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$src."&w=".$max_width;
+					$img->setAttribute('src', $resize);
+				}
 			}
 		}
-	}
 	
-	$stuff = $dom->saveHTML();
+		$stuff = $dom->saveHTML();
+	}else{
+		$stuff = $html;
+	}
 	
 	return $stuff;
 }
@@ -207,62 +211,66 @@ Filter content for a basic mobile device
 */
 function websitez_filter_basic_page($html){
 	global $websitez_preinstalled_templates;
-
-	//Resize the images on the page
-	$dom = new DOMDocument();
-	$dom->loadHTML($html);
 	
-	// grab all the on the page and make sure they are the right size
-	$xpath = new DOMXPath($dom);
-	$divs = $xpath->evaluate("/html/body//div");
+	if (class_exists('DOMDocument')) {
+		//Resize the images on the page
+		$dom = new DOMDocument();
+		$dom->loadHTML($html);
 	
-	for ($i = 0; $i < $divs->length; $i++) {
-		$div = $divs->item($i);
-		$div->removeAttribute('data-role');
-		$div->removeAttribute('data-theme');
-		$div->removeAttribute('style');
-		$div->removeAttribute('data-icon');
-		$div->removeAttribute('data-iconpos');
-		$div->removeAttribute('onclick');
-		$div->removeAttribute('data-state');
+		// grab all the on the page and make sure they are the right size
+		$xpath = new DOMXPath($dom);
+		$divs = $xpath->evaluate("/html/body//div");
+	
+		for ($i = 0; $i < $divs->length; $i++) {
+			$div = $divs->item($i);
+			$div->removeAttribute('data-role');
+			$div->removeAttribute('data-theme');
+			$div->removeAttribute('style');
+			$div->removeAttribute('data-icon');
+			$div->removeAttribute('data-iconpos');
+			$div->removeAttribute('onclick');
+			$div->removeAttribute('data-state');
+		}
+	
+		$links = $xpath->evaluate("/html/body//a");
+	
+		for ($i = 0; $i < $links->length; $i++) {
+			$link = $links->item($i);
+			$link->removeAttribute('data-inline');
+			$link->removeAttribute('data-role');
+			$link->removeAttribute('data-theme');
+			$link->removeAttribute('style');
+			$link->removeAttribute('data-icon');
+			$link->removeAttribute('data-iconpos');
+			$link->removeAttribute('onclick');
+		}
+	
+		$uls = $xpath->evaluate("/html/body//ul");
+	
+		for ($i = 0; $i < $uls->length; $i++) {
+			$ul = $uls->item($i);
+			$ul->removeAttribute('data-inline');
+			$ul->removeAttribute('data-role');
+			$ul->removeAttribute('data-theme');
+			$ul->removeAttribute('data-inset');
+			$ul->removeAttribute('style');
+			$ul->removeAttribute('data-icon');
+			$ul->removeAttribute('data-iconpos');
+			$ul->removeAttribute('onclick');
+		}
+	
+		$htmls = $xpath->evaluate("/html");
+	
+		for ($i = 0; $i < $htmls->length; $i++) {
+			$h = $htmls->item($i);
+			$h->removeAttribute('dir');
+			$h->removeAttribute('lang');
+		}
+	
+		$text = $dom->saveHTML();
+	}else{
+		$text = $html;
 	}
-	
-	$links = $xpath->evaluate("/html/body//a");
-	
-	for ($i = 0; $i < $links->length; $i++) {
-		$link = $links->item($i);
-		$link->removeAttribute('data-inline');
-		$link->removeAttribute('data-role');
-		$link->removeAttribute('data-theme');
-		$link->removeAttribute('style');
-		$link->removeAttribute('data-icon');
-		$link->removeAttribute('data-iconpos');
-		$link->removeAttribute('onclick');
-	}
-	
-	$uls = $xpath->evaluate("/html/body//ul");
-	
-	for ($i = 0; $i < $uls->length; $i++) {
-		$ul = $uls->item($i);
-		$ul->removeAttribute('data-inline');
-		$ul->removeAttribute('data-role');
-		$ul->removeAttribute('data-theme');
-		$ul->removeAttribute('data-inset');
-		$ul->removeAttribute('style');
-		$ul->removeAttribute('data-icon');
-		$ul->removeAttribute('data-iconpos');
-		$ul->removeAttribute('onclick');
-	}
-	
-	$htmls = $xpath->evaluate("/html");
-	
-	for ($i = 0; $i < $htmls->length; $i++) {
-		$h = $htmls->item($i);
-		$h->removeAttribute('dir');
-		$h->removeAttribute('lang');
-	}
-	
-	$text = $dom->saveHTML();
 	
 	$text = preg_replace(
 	  array(
@@ -860,12 +868,12 @@ function websitez_kpr(){
 	$kpr_phrase = array(
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //0
 		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //1
-		'<a href="http://websitez.com/products-page/featured/wordpress-mobile-plugin/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
+		'<a href="http://websitez.com/wordpress-mobile/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //3
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //4
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //5
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile Plugins</a>', //6
-		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
+		'<a href="http://websitez.com/products-page/mobile-themes/" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //8
 		'<a href="http://websitez.com" title="WordPress Mobile Plugins">WordPress Mobile Plugins</a>', //9
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //10
