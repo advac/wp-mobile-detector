@@ -28,6 +28,11 @@ This plugin is compatible with most other mobile detection plugins. Use the WP M
 * Includes seven mobile themes pre-installed.
 * Select any of the seven pre-installed mobile themes or choose one of your own.
 
+*WP Mobile Detector premium is now available!*
+Build your own custom mobile theme with our brand new interactive mobile theme editor. Change colors, upload a logo, insert mobile ads, track visitors with mobile statistics, and much more! See all of your changes in real-time right from your own browser. See exactly what your mobile visitors see.
+
+For more information please visit our website: http://websitez.com/wordpress-mobile/
+
 == Installation ==
 
 1. Unzip and place the 'wp-mobile-detector' folder in your 'wp-content/plugins' directory
