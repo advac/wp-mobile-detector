@@ -858,12 +858,12 @@ function websitez_kpr(){
 	$kpr_phrase = array(
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //0
 		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //1
-		'<a href="http://websitez.com/products-page/featured/wordpress-mobile-plugin/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
+		'<a href="http://websitez.com/wordpress-mobile/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //3
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //4
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //5
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile Plugins</a>', //6
-		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
+		'<a href="http://websitez.com/products-page/mobile-themes/" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //8
 		'<a href="http://websitez.com" title="WordPress Mobile Plugins">WordPress Mobile Plugins</a>', //9
 		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //10
