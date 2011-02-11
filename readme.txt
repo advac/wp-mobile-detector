@@ -3,7 +3,7 @@ Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, b
 Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
-Tested up to: 3.0.3
+Tested up to: 3.0.5
 Stable tag: 1.6.8
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
@@ -72,6 +72,7 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 = 1.6.9 =
 
 + Remove images from basic mobile devices
++ W3 Total Cache support, please read: http://websitez.com/how-to-get-w3-total-cache-mobile-plugins-to-work/
 
 = 1.6.8 =
 

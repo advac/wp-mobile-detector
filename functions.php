@@ -1,4 +1,12 @@
 <?php
+function websitez_get_mobile_device(){
+	global $websitez_mobile_device;
+	return $websitez_mobile_device;
+}
+function websitez_set_mobile_device($mobile_device){
+	global $websitez_mobile_device;
+	$websitez_mobile_device = $mobile_device;
+}
 /*
 Validate the mobile theme
 */
@@ -364,6 +372,9 @@ Lets get this party started
 function websitez_check_and_act_mobile(){
 	global $table_prefix, $wpdb, $websitez_free_version, $websitez_preinstalled_templates;
 	$mobile_device = websitez_detect_mobile_device();
+	//Set the detection
+	websitez_set_mobile_device($mobile_device);
+	
 	//Is it a mobile device?
 	if($mobile_device['status'] == true || $mobile_device['status'] == "1"){
 		//Record a mobile visit only on the regular site and if it is enabled
