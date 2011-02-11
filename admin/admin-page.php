@@ -1,4 +1,4 @@
-<?
+<?php
 //Make sure that we're displaying statistics according to the timezone
 //set for each individual wordpress install
 if(function_exists('date_default_timezone_set'))
@@ -7,7 +7,7 @@ add_action('admin_head', 'websitez_admin_head');
 
 function websitez_admin_head()
 {
-	echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
+	//echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
 }
 
 /*
@@ -17,6 +17,7 @@ function websitez_configuration_menu(){
 	add_menu_page( __( WEBSITEZ_PLUGIN_NAME, 'Websitez' ), __( '<span style="font-size:12px;">'.__(WEBSITEZ_PLUGIN_NAME).'</span>', 'Websitez' ), 8, 'websitez_config', 'websitez_configuration_page',plugin_dir_url(__FILE__).'images/phone_icon_16x16.png');
 	add_submenu_page( 'websitez_config', __('Settings', 'Websitez'), __('Settings', 'Websitez'), 8, 'websitez_config', 'websitez_configuration_page' );
 	add_submenu_page( 'websitez_config', __('Stats', 'Websitez'), __('Stats', 'Websitez'), 8, 'websitez_stats', 'websitez_stats_page' );
+	add_submenu_page( 'websitez_config', __('Mobile Themes', 'Websitez'), __('Mobile Themes', 'Websitez'), 8, 'websitez_themes', 'websitez_themes_page' );
 }
 
 function websitez_stats_page(){
@@ -42,7 +43,7 @@ function websitez_stats_page(){
 	    function drawChart() {
 	      var data = new google.visualization.DataTable();
 	      data.addColumn('string', 'Date');
-	      <?
+	      <?php
 	      //Set some values
 	      $total_googlebot_visits = 0;
 	      $total_bing_bot_visits = 0;
@@ -126,8 +127,8 @@ function websitez_stats_page(){
 				?>
 				data.addColumn('number', 'Advanced Mobile Device');
 	      data.addColumn('number', 'Basic Mobile Device');
-				data.addRows(<?=count($chart_this)?>);
-				<?
+				data.addRows(<?php echo count($chart_this);?>);
+				<?php
 				$j=0;
 				if(count($chart_this) > 0){
 					foreach($chart_this as $day=>$day_data):
@@ -156,10 +157,10 @@ function websitez_stats_page(){
 				<tr>
 					<th class="manage-column" scope="col" style="text-align: center; font-size: 13px;">
 						<?php _e('Showing mobile statistics for:')?>
-						<select name="type" class="theme_template" style="width: 200px;" onchange="window.location='<?=$_SERVER['SCRIPT_NAME']?>?page=<?=$_GET['page']?>&type='+this.value">
-							<option value="today" <? if($_GET['type'] == "today") echo "selected";?>>Today</option>
-							<option value="7day" <? if($_GET['type'] == "7day") echo "selected";?>>Last 7 Days</option>
-							<option value="mtd" <? if($_GET['type'] == "mtd") echo "selected";?>>Month-To-Date</option>
+						<select name="type" class="theme_template" style="width: 200px;" onchange="window.location='<?php echo $_SERVER['SCRIPT_NAME'];?>?page=<?php echo $_GET['page'];?>&type='+this.value">
+							<option value="today" <?php if($_GET['type'] == "today") echo "selected";?>>Today</option>
+							<option value="7day" <?php if($_GET['type'] == "7day") echo "selected";?>>Last 7 Days</option>
+							<option value="mtd" <?php if($_GET['type'] == "mtd") echo "selected";?>>Month-To-Date</option>
 						</select>
 					</th>
 				</tr>
@@ -168,11 +169,11 @@ function websitez_stats_page(){
 				<td>
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
-							<td width="20" align="center" style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/basic_phone_icon_16x16.gif"></td>
+							<td width="20" align="center" style="padding-top: 5px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/basic_phone_icon_16x16.gif"></td>
 							<td><?php _e('<h3 style="margin: 0px 0px 10px;"><u>Basic Mobile Device</u></h3><p>Total Unique Visitors: '.$total_basic_unique_visits.'</p><p>Total Visits: '.$total_basic_visits.'</p>') ?></td>
-							<td width="20" align="center" style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/phone_icon_16x16.png"></td>
+							<td width="20" align="center" style="padding-top: 5px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/phone_icon_16x16.png"></td>
 							<td><?php _e('<h3 style="margin: 0px 0px 10px;"><u>Advanced Mobile Device</u></h3><p>Total Unique Visitors: '.$total_advanced_unique_visits.'</p><p>Total Visits: '.$total_advanced_visits.'</p>') ?></td>
-							<td width="20" align="center" style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/icon_analytics_16x16.gif"></td>
+							<td width="20" align="center" style="padding-top: 5px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/icon_analytics_16x16.gif"></td>
 							<td><?php _e('<h3 style="margin: 0px 0px 10px;"><u>Mobile Device Details</u></h3><p>Total Googlebot Mobile Visitors: '.$total_googlebot_visits.'</p><p>Total Bing Bot Mobile Visitors: '.$total_bing_bot_visits.'</p>') ?></td>
 						</tr>
 					</table>
@@ -206,30 +207,30 @@ function websitez_stats_page(){
 					</th>
 				</tr>
 			</thead>
-			<?
+			<?php
 			if(count($visitors) > 0){
 				foreach($visitors as $v):
 				?>
 				<tr valign="top" class="author-self status-publish iedit">
-					<td style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/<? if($v['type'] == "2") echo "basic_phone_icon_16x16.gif"; else echo "phone_icon_16x16.png";?>"></td>
+					<td style="padding-top: 5px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/<?php if($v['type'] == "2") echo "basic_phone_icon_16x16.gif"; else echo "phone_icon_16x16.png";?>"></td>
 					<td><?php _e('<p>'.count($v['visits']).'</p>') ?></td>
 					<td><?php _e('<p>'.date("Y-m-d H:i:s", strtotime($v['visits'][(count($v['visits'])-1)])).'</p>') ?></td>
 					<td><?php _e('<p>'.$v['data']['REMOTE_ADDR'].'</p>') ?></td>
 					<td><?php _e('<p>'.$v['data']['HTTP_USER_AGENT'].'</p>') ?></td>
 				</tr>
-				<?
+				<?php
 				endforeach;
 			}
 			?>
 		</table>
 	</div>
 	<div>
-		<?
+		<?php
 		//Get dynamic footer
 		_e(websitez_dynamic_footer());
 		?>
 	</div>
-<?
+<?php
 }
 
 function websitez_configuration_page() 
@@ -241,10 +242,10 @@ function websitez_configuration_page()
 		<tr>
 			<td width="60%" valign="top">
 				<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?></h1>
-				<p><?php _e('Configure which theme to show to each mobile device.') ?></p>
+				<p><?php _e('Configure the settings for the WP Mobile Detector plugin.') ?></p>
 			</td>
 			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
-				<p><a href="http://ready.mobi/results.jsp?uri=<?=bloginfo('url')?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?=plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
+				<p><a href="http://ready.mobi/results.jsp?uri=<?php echo bloginfo('url'); ?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?php echo plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
 				<?php _e(websitez_dynamic_offers());?>
 			</td>
 		</tr>
@@ -252,11 +253,11 @@ function websitez_configuration_page()
 	<div id="plugin-description" class="widefat alternate" style="margin:10px 0; padding:5px;background-color:#FFFEEB;">
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr>
-				<td width="20" align="center" style="padding-top: 5px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/basic_phone_icon_16x16.gif"></td>
+				<td width="20" align="center" style="padding-top: 5px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/basic_phone_icon_16x16.gif"></td>
 				<td><?php _e('<h3 style="margin: 0px 0px 10px;"><u>Basic Mobile Device</u></h3><p>The WP Mobile Detector will remove all images and advanced HTML  from being displayed on basic devices.</p>') ?></td>
 			</tr>
 			<tr>
-				<td width="20" align="center" style="padding-top: 10px;"><img src="<?= plugin_dir_url(__FILE__); ?>images/phone_icon_16x16.png"></td>
+				<td width="20" align="center" style="padding-top: 10px;"><img src="<?php echo plugin_dir_url(__FILE__); ?>images/phone_icon_16x16.png"></td>
 				<td><?php _e('<h3 style="margin: 5px 0px 10px;"><u>Advanced Mobile Device</u></h3><p>The WP Mobile Detector will resize images that are too large to display on advanced mobile devices.</p>') ?></td>
 			</tr>
 		</table>
@@ -311,11 +312,11 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
-	}else if(isset($_POST['use_preinstalled_themes'])){
-		$value = $_POST['use_preinstalled_themes'];
+	}else if(isset($_POST['show_attribution'])){
+		$value = $_POST['show_attribution'];
 		
-		if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
-			if(update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, $value)){
+		if(get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME)){
+			if(update_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME, $value)){
 				$u = true;
 			}else{
 				$u = false;
@@ -328,50 +329,15 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
-		
 	}
 	
 	//Now that the settings are saved, get the themes
 	$current_themes_installed = websitez_get_current_themes();
 ?>
-		<table class="widefat post fixed" cellspacing="0">
-			<thead>
-				<tr>
-					<th class="manage-column" scope="col" width="180">Phone Type</th>
-					<th class="manage-column" scope="col" width="250">Mobile Theme</th>
-					<?/*<th class="manage-column" scope="col" width="370">Redirect URL</th>*/?>
-					<th class="manage-column" scope="col">Operation</th>
-				</tr>
-			</thead>
-			<form method="post" action="">
-		<?php $mobile_types = websitez_get_mobile_types(); foreach($mobile_types as $type): ?>
-			<?
-			$option = get_option($type['option']);
-			$redirect = get_option($type['url_redirect']);
-			?>
-			<form method="post" action="">
-				<input type="hidden" name="action" value="<?= $type['option'] ?>">
-			<tr valign="top" class="author-self status-publish iedit">
-				<th scope="row"><?php _e($type['name']) ?></th>
-				<td>
-					<select name="<?= $type['option'] ?>" class="theme_template">
-							<option name="theme_template" value="<?php echo WEBSITEZ_DEFAULT_THEME; ?>">Please select a mobile theme...</option>
-							<?php foreach($current_themes_installed as $name => $mobile_theme): ?>
-							<option name="theme_template" value="<?php echo $mobile_theme['Template']; ?>" <?php if($option==$mobile_theme['Template']) echo 'selected="selected"'; ?>><?php _e($name); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</td>
-				<?/*<td><input type="hidden" name="url_field" value="<?= $type['url_redirect'] ?>"><input type="text" name="redirect_url" value="<?=$redirect?>" size="40"></td>*/?>
-				<td>
-					<input type="submit" class="button submit" value="Update">
-				</td>
-			</tr>
-		</form>
-		<?php $i++; endforeach; ?>
-		</table>
-		<?
+
+		<?php
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
-		$websitez_use_preinstalled_themes = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
+		$websitez_show_attribution = get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME);
 		?>
 		<form action="" method="POST">
 		<div style="margin:10px 0;">
@@ -385,8 +351,8 @@ function websitez_configuration_page()
 				<tr valign="top" class="author-self status-publish iedit">
 					<td>
 						<select name="record_stats" class="theme_template" style="width: 100px;">
-								<option value="true" <? if($websitez_record_stats == "true") echo "selected";?>><?php _e('Yes'); ?></option>
-								<option value="false" <? if($websitez_record_stats == "false") echo "selected";?>><?php _e('No'); ?></option>
+								<option value="true" <?php if($websitez_record_stats == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <?php if($websitez_record_stats == "false") echo "selected";?>><?php _e('No'); ?></option>
 						</select>
 					</td>
 					<td>
@@ -401,15 +367,15 @@ function websitez_configuration_page()
 			<table class="widefat post fixed" cellspacing="0">
 				<thead>
 					<tr>
-						<th class="manage-column" scope="col" width="445">Use pre-installed themes?</th>
+						<th class="manage-column" scope="col" width="445">Give credit to WP Mobile Detector with a footer link?</th>
 						<th class="manage-column" scope="col">Operation</th>
 					</tr>
 				</thead>
 				<tr valign="top" class="author-self status-publish iedit">
 					<td>
-						<select name="use_preinstalled_themes" class="theme_template" style="width: 100px;">
-								<option value="true" <? if($websitez_use_preinstalled_themes == "true") echo "selected";?>><?php _e('Yes'); ?></option>
-								<option value="false" <? if($websitez_use_preinstalled_themes == "false") echo "selected";?>><?php _e('No'); ?></option>
+						<select name="show_attribution" class="theme_template" style="width: 100px;">
+								<option value="true" <?php if($websitez_show_attribution == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <?php if($websitez_show_attribution == "false") echo "selected";?>><?php _e('No'); ?></option>
 						</select>
 					</td>
 					<td>
@@ -420,7 +386,7 @@ function websitez_configuration_page()
 		</div>
 		</form>
 		<div>
-			<?
+			<?php
 			//Get dynamic footer
 			_e(websitez_dynamic_footer());
 			?>
@@ -433,7 +399,11 @@ function websitez_configuration_page()
 Get the dynamic footer remotely
 */
 function websitez_dynamic_footer(){
-	$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
+		//$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
+	else
+		$websitez_footer = "";
 	return $websitez_footer;
 }
 
@@ -441,7 +411,11 @@ function websitez_dynamic_footer(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers(){
-	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/offers.php","");
+		//$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers.php");
+	else
+		$websitez_offers = "";
 	return $websitez_offers;
 }
 
@@ -449,7 +423,36 @@ function websitez_dynamic_offers(){
 Get dynamic offers for customers
 */
 function websitez_dynamic_offers_stats(){
-	$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
+	if(websitez_iscurlinstalled())
+		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php","");
+		//$websitez_offers = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/offers-stats.php");
+	else
+		$websitez_offers = "";
 	return $websitez_offers;
+}
+
+/*
+Check for CURL
+*/
+function websitez_iscurlinstalled() {
+	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/*
+Perform CURL
+*/
+function websitez_remote_request($host,$path){
+	$fp = curl_init($host);
+	curl_setopt($fp, CURLOPT_POST, true);
+	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
+	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	$page = curl_exec($fp);
+	curl_close($fp);
+	
+	return $page;
 }
 ?>
