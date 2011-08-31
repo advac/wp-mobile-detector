@@ -69,6 +69,10 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 
 == Changelog ==
 
+= 1.7 =
+
++ Fixed a security risk in the timthumb.php script addressing invalid domains being authorized based on similar domains.
+
 = 1.6.9 =
 
 + Remove images from basic mobile devices

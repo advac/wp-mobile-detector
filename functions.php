@@ -182,31 +182,46 @@ Filter content for an advanced mobile device
 */
 function websitez_filter_advanced_page($html){
 	if (class_exists('DOMDocument')) {
-		//Resize the images on the page
-		$dom = new DOMDocument();
-		$dom->loadHTML($html);
-	
-		// grab all the on the page and make sure they are the right size
-		$xpath = new DOMXPath($dom);
-		$imgs = $xpath->evaluate("/html/body//img");
-	
-		for ($i = 0; $i < $imgs->length; $i++) {
-			$img = $imgs->item($i);
-			$src = trim($img->getAttribute('src'));
-			$img->removeAttribute('width');
-			$img->removeAttribute('height');
-			//Use dynamic image resizer link
-			if(strlen($src) > 0){
-				$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
-				list($width, $height) = getimagesize($src);
-				if($width > $max_width){
-					$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$src."&w=".$max_width;
-					$img->setAttribute('src', $resize);
+		try{
+			//Resize the images on the page
+			$dom = new DOMDocument();
+			$dom->loadHTML($html);
+			
+			// grab all the on the page and make sure they are the right size
+			$xpath = new DOMXPath($dom);
+			$imgs = $xpath->evaluate("/html/body//img");
+			
+			for ($i = 0; $i < $imgs->length; $i++) {
+				$img = $imgs->item($i);
+				$src = trim($img->getAttribute('src'));
+				$img->removeAttribute('width');
+				$img->removeAttribute('height');
+				//Use dynamic image resizer link
+				if(strlen($src) > 0){
+					$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
+					list($width, $height) = getimagesize($src);
+					$blog_url = get_bloginfo('siteurl');
+					if($width > $max_width){
+						if(stripos($src,$blog_url) !== false):
+							$arr = explode("/",$src);
+							if(count($arr) > 4):
+								unset($arr[0]);
+								unset($arr[1]);
+								unset($arr[2]);
+								$src = "/".implode("/",$arr);
+							endif;
+						endif;
+						$tmp = parse_url($src);
+						$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$tmp['path']."&w=".$max_width;
+						$img->setAttribute('src', $resize);
+					}
 				}
 			}
+			
+			$stuff = $dom->saveHTML();
+		}catch(Exception $e){
+			$stuff = $html;
 		}
-	
-		$stuff = $dom->saveHTML();
 	}else{
 		$stuff = $html;
 	}
