@@ -212,7 +212,12 @@ function websitez_filter_advanced_page($html){
 							endif;
 						endif;
 						$tmp = parse_url($src);
-						$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$tmp['path']."&w=".$max_width;
+						if(strlen($tmp['host']) > 0):
+							$path = $tmp['scheme']."://".$tmp['host'].$tmp['path'];
+						else:
+							$path = $tmp['path'];
+						endif;
+						$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".urlencode($path)."&w=".$max_width;
 						$img->setAttribute('src', $resize);
 					}
 				}
