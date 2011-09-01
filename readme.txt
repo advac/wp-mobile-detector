@@ -3,8 +3,8 @@ Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, b
 Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
-Tested up to: 3.1
-Stable tag: 1.6.9
+Tested up to: 3.2.1
+Stable tag: 1.7.1
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -68,6 +68,14 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 10. Bluesteel Mobile Theme
 
 == Changelog ==
+
+= 1.7.1 =
+
++ Switching jQuery references from $() to be jQuery() to avoid conflicts.
+
+= 1.7 =
+
++ Fixed a security risk in the timthumb.php script addressing invalid domains being authorized based on similar domains.
 
 = 1.6.9 =
 
