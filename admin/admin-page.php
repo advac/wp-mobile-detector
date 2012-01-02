@@ -400,7 +400,7 @@ Get the dynamic footer remotely
 */
 function websitez_dynamic_footer(){
 	if(websitez_iscurlinstalled())
-		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
+		$websitez_footer = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
 		//$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
 	else
 		$websitez_footer = "";
