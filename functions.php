@@ -1,4 +1,46 @@
 <?php
+function websitez_dashboard_setup(){
+	$websitez_show_dashboard_widget = get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME);
+	if($websitez_show_dashboard_widget == "true"):
+		wp_add_dashboard_widget('websitez_dashboard_widget', 'WP Mobile Detector Updates', 'websitez_dashboard_widget_function');
+		global $wp_meta_boxes;
+		
+		// Get the regular dashboard widgets array 
+		// (which has our new widget already but at the end)
+	
+		$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		
+		// Backup and delete our new dashbaord widget from the end of the array
+	
+		$example_widget_backup = array('websitez_dashboard_widget' => $normal_dashboard['websitez_dashboard_widget']);
+		unset($normal_dashboard['websitez_dashboard_widget']);
+	
+		// Merge the two arrays together so our widget is at the beginning
+	
+		$sorted_dashboard = array_merge($example_widget_backup, $normal_dashboard);
+	
+		// Save the sorted array back into the original metaboxes 
+	
+		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+	endif;
+}
+
+function websitez_dashboard_widget_function(){
+	$data = unserialize(websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/dashboard-feed.php",""));
+	if($data != false):
+		if(strlen($data['ad']) > 0):
+			echo $data['ad'];
+		endif;
+		if(count($data['feed']) > 0):
+			echo "<ul>";
+			foreach($data['feed'] as $item):
+				echo "<li>".$item."</li>";
+			endforeach;
+			echo "</ul>";
+		endif;
+	endif;
+}
+
 function websitez_get_mobile_device(){
 	global $websitez_mobile_device;
 	return $websitez_mobile_device;
@@ -107,7 +149,13 @@ function websitez_install(){
 		
 		if(!get_option(WEBSITEZ_ADVANCED_URL_REDIRECT))
 			add_option(WEBSITEZ_ADVANCED_URL_REDIRECT, '', '', 'yes');*/
-			
+		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME, WEBSITEZ_SHOW_MOBILE_TO_TABLETS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME))
+			add_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME, WEBSITEZ_SHOW_DASHBOARD_WIDGET, '', 'yes');
+		
 		if(!get_option(WEBSITEZ_RECORD_STATS_NAME))
 			add_option(WEBSITEZ_RECORD_STATS_NAME, WEBSITEZ_RECORD_STATS, '', 'yes');
 		
@@ -546,12 +594,28 @@ function websitez_detect_mobile_device(){
   $accept = $_SERVER['HTTP_ACCEPT'];
 	//Type of phone
 	$mobile_browser_type = "0"; //0 - PC, 1 - Smart Phone, 2- Standard Phone
+	
+	$show_mobile_to_tablets = get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME);
 
 	switch(true){
+		case (preg_match('/ipad/i',$user_agent)||preg_match('/kindle/i',$user_agent)||preg_match('/nook/i',$user_agent)); //Tablets
+			if($show_mobile_to_tablets == 'true'):
+				$mobile_browser = true;
+				$mobile_browser_type = "1"; //Smart Phone
+			else:
+				$mobile_browser = false;
+				$mobile_browser_type = "0"; //Smart Phone
+			endif;
+    break;
 		/*
 		Start off with smart phones or smart devices
 		*/
-		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)||preg_match('/ipad/i',$user_agent)); //iPhone or iPod
+		case (preg_match('/ipad/i',$user_agent)); //Tablets
+      $mobile_browser = true;
+			$mobile_browser_type = "1"; //Smart Phone
+    break;
+		
+		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)); //iPhone or iPod
       $mobile_browser = true;
 			$mobile_browser_type = "1"; //Smart Phone
     break;
@@ -982,5 +1046,30 @@ function websitez_kpr(){
 	{
 		return $kpr_phrase[10];
 	}
+}
+
+/*
+Check for CURL
+*/
+function websitez_iscurlinstalled() {
+	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/*
+Perform CURL
+*/
+function websitez_remote_request($host,$path){
+	$fp = curl_init($host);
+	curl_setopt($fp, CURLOPT_POST, true);
+	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
+	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	$page = curl_exec($fp);
+	curl_close($fp);
+	
+	return $page;
 }
 ?>
