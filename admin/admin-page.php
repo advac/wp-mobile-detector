@@ -26,12 +26,9 @@ function websitez_stats_page(){
 	<div class="wrap">
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr>
-				<td width="60%" valign="top">
+				<td valign="top">
 					<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME." - Statistics") ); ?></h1>
 					<p><?php _e('View detailed mobile visitor statistics from users who visit your site from a mobile device.');?></p>
-				</td>
-				<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
-					<?php _e(websitez_dynamic_offers_stats());?>
 				</td>
 			</tr>
 		</table>
@@ -246,7 +243,6 @@ function websitez_configuration_page()
 			</td>
 			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
 				<p><a href="http://ready.mobi/results.jsp?uri=<?php echo bloginfo('url'); ?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?php echo plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
-				<?php _e(websitez_dynamic_offers());?>
 			</td>
 		</tr>
 	</table>
@@ -329,6 +325,32 @@ function websitez_configuration_page()
 			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
 		else
 			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
+	}else if(isset($_POST['show_dashboard_widget'])){
+		$value = $_POST['show_dashboard_widget'];
+		
+		if(update_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME, $value)){
+			$u = true;
+		}else{
+			$u = false;
+		}
+		
+		if($u)
+			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
+		else
+			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
+	}else if(isset($_POST['show_mobile_to_tablets'])){
+		$value = $_POST['show_mobile_to_tablets'];
+		
+		if(update_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME, $value)){
+			$u = true;
+		}else{
+			$u = false;
+		}
+		
+		if($u)
+			echo '<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>';
+		else
+			echo '<div id="message" class="updated fade"><p><strong>Error saving settings.</strong></p></div>';
 	}
 	
 	//Now that the settings are saved, get the themes
@@ -338,6 +360,8 @@ function websitez_configuration_page()
 		<?php
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_show_attribution = get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME);
+		$websitez_show_dashboard_widget = get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME);
+		$websitez_show_tablets_to_mobile = get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME);
 		?>
 		<form action="" method="POST">
 		<div style="margin:10px 0;">
@@ -385,6 +409,52 @@ function websitez_configuration_page()
 			</table>
 		</div>
 		</form>
+		<form action="" method="POST">
+		<div style="margin:10px 0;">
+			<table class="widefat post fixed" cellspacing="0">
+				<thead>
+					<tr>
+						<th class="manage-column" scope="col" width="445">Show dashboard widget?</th>
+						<th class="manage-column" scope="col">Operation</th>
+					</tr>
+				</thead>
+				<tr valign="top" class="author-self status-publish iedit">
+					<td>
+						<select name="show_dashboard_widget" class="theme_template" style="width: 100px;">
+								<option value="true" <?php if($websitez_show_dashboard_widget == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <?php if($websitez_show_dashboard_widget == "false") echo "selected";?>><?php _e('No'); ?></option>
+						</select>
+					</td>
+					<td>
+						<input type="submit" class="button submit" value="Update">
+					</td>
+				</tr>
+			</table>
+		</div>
+		</form>
+		<form action="" method="POST">
+		<div style="margin:10px 0;">
+			<table class="widefat post fixed" cellspacing="0">
+				<thead>
+					<tr>
+						<th class="manage-column" scope="col" width="445">Show mobile to tablet devices?</th>
+						<th class="manage-column" scope="col">Operation</th>
+					</tr>
+				</thead>
+				<tr valign="top" class="author-self status-publish iedit">
+					<td>
+						<select name="show_mobile_to_tablets" class="theme_template" style="width: 100px;">
+								<option value="true" <?php if($websitez_show_tablets_to_mobile == "true") echo "selected";?>><?php _e('Yes'); ?></option>
+								<option value="false" <?php if($websitez_show_tablets_to_mobile == "false") echo "selected";?>><?php _e('No'); ?></option>
+						</select>
+					</td>
+					<td>
+						<input type="submit" class="button submit" value="Update">
+					</td>
+				</tr>
+			</table>
+		</div>
+		</form>
 		<div>
 			<?php
 			//Get dynamic footer
@@ -400,7 +470,7 @@ Get the dynamic footer remotely
 */
 function websitez_dynamic_footer(){
 	if(websitez_iscurlinstalled())
-		$websitez_offers = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
+		$websitez_footer = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/footer.php","");
 		//$websitez_footer = file_get_contents("http://websitez.com/api/websitez-wp-mobile-detector/footer.php");
 	else
 		$websitez_footer = "";
@@ -429,30 +499,5 @@ function websitez_dynamic_offers_stats(){
 	else
 		$websitez_offers = "";
 	return $websitez_offers;
-}
-
-/*
-Check for CURL
-*/
-function websitez_iscurlinstalled() {
-	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
-		return true;
-	}else{
-		return false;
-	}
-}
-
-/*
-Perform CURL
-*/
-function websitez_remote_request($host,$path){
-	$fp = curl_init($host);
-	curl_setopt($fp, CURLOPT_POST, true);
-	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
-	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
-	$page = curl_exec($fp);
-	curl_close($fp);
-	
-	return $page;
 }
 ?>
