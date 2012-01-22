@@ -26,19 +26,8 @@ function websitez_dashboard_setup(){
 }
 
 function websitez_dashboard_widget_function(){
-	$data = unserialize(websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/dashboard-feed.php",""));
-	if($data != false):
-		if(strlen($data['ad']) > 0):
-			echo $data['ad'];
-		endif;
-		if(count($data['feed']) > 0):
-			echo "<ul>";
-			foreach($data['feed'] as $item):
-				echo "<li>".$item."</li>";
-			endforeach;
-			echo "</ul>";
-		endif;
-	endif;
+	$data = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/dashboard-feed.php","");
+	echo $data;
 }
 
 function websitez_get_mobile_device(){
