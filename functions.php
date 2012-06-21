@@ -747,7 +747,7 @@ function websitez_get_themes($path = null, $only_mobile = false) {
 		$wp_theme_directories = array($path);
 	}
 
-	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories())
+	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories(true))
 		return false;
 
 	asort( $theme_files );
