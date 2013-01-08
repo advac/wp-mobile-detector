@@ -396,6 +396,56 @@ function websitez_checkInstalled(){
 }
 
 /*
+Check to make sure authorization token is set.
+*/
+function websitez_authorization(){
+	$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+	if(!$token):
+		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')));
+		if($response && $response['status'] == "1" && strlen($response['token']) > 0):
+			update_option(WEBSITEZ_PLUGIN_AUTHORIZATION,$response['token']);
+		endif;
+	endif;
+}
+
+/*
+Append a pixel to the bottom of the page for mobile stats
+*/
+function websitez_set_stat_pixel_buffer_append($html){
+	if(class_exists('DOMDocument')):
+		try{
+			$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+			$dom = new DOMDocument();
+			$xpath = new DOMXPath($dom);
+			$dom->loadHTML($html);
+			$img = $dom->createElement("img");
+	  	$img->setAttribute("src","http://stats.websitez.com/record.php?token=".$token);
+	  	$img->setAttribute("width","1");
+	  	$img->setAttribute("height","1");
+	  	$body = $dom->getElementsByTagName('body')->item(0);
+	  	$body->appendChild($img);
+			$html = $dom->saveHTML();	  
+		}catch (Exception $e){  
+			//Do nothing for now.  
+		}
+	endif;
+	
+	return $html;
+}
+
+/*
+Start the buffer to filter the raw contents of a page
+*/
+function websitez_set_stat_pixel_buffer(){
+	//Don't filter Dashboard pages and the feed
+	if (is_feed() || is_admin()){
+		return;
+	}
+
+	ob_start("websitez_set_stat_pixel_buffer_append");
+}
+
+/*
 Change where it looks for themes on the frond end
 */
 function websitez_setThemeFolderFront(){
@@ -440,6 +490,7 @@ function websitez_check_and_act_mobile(){
 		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
 			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
+		add_action('wp', 'websitez_set_stat_pixel_buffer', 10, 0);
 
 		if($mobile_device['type'] == "2"){ //Standard device
 			$option = get_option(WEBSITEZ_BASIC_THEME);
@@ -687,7 +738,8 @@ function websitez_set_previous_detection($status,$type,$user_agent){
 		//This is set to prevent caching mechanisms such as W3 total cache from caching the mobile page
 		setcookie("websitez_is_mobile", "true", time()+3600, "/");
 	}
-	setcookie("websitez_mobile_detector", $status."|".$type."|".md5($user_agent), time()+3600, "/");
+	$status = ($status == true) ? "true" : "false";
+	$s = setcookie("websitez_mobile_detector", $status."|".$type."|".md5($user_agent), time()+3600, "/");
 }
 
 /*
