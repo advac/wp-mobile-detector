@@ -76,7 +76,6 @@ function websitez_themes_page(){
 		</td>
 		<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
 			<p><a href="http://ready.mobi/results.jsp?uri=<?php echo bloginfo('url'); ?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?php echo plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
-			<?php _e(websitez_dynamic_offers());?>
 		</td>
 	</tr>
 </table>
