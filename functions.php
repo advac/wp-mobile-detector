@@ -483,7 +483,7 @@ function websitez_check_and_act_mobile(){
 	websitez_set_mobile_device($mobile_device);
 	
 	//Is it a mobile device?
-	if($mobile_device['status'] == true || $mobile_device['status'] == "1"){
+	if($mobile_device['status'] == "true"){
 		//Record a mobile visit only on the regular site and if it is enabled
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
@@ -601,9 +601,10 @@ function websitez_web_head(){
 Attribution and ability to switch between mobile and full site
 */
 function websitez_web_head_mobile(){
+	$cookie_name = WEBSITEZ_COOKIE_NAME;
 	echo "<script type='text/javascript'>\n
 	function websitez_setMobileSite(){\n
-		websitez_setCookie('websitez_mobile_detector','',-1);
+		websitez_setCookie('$cookie_name','',-1);
 		websitez_setCookie('websitez_mobile_detector_fullsite','',-1);
 		window.location.reload();\n
 	}\n
@@ -724,36 +725,42 @@ function websitez_detect_mobile_device(){
 		break;
 	}
 	
-	//Set a persistent client-side value to avoid having to detect again for this visitor
-	websitez_set_previous_detection($mobile_browser,$mobile_browser_type,$user_agent);
+	$mobile_browser_status = ($mobile_browser == true) ? "true" : "false";
 	
-	return array('status'=>$mobile_browser,'type'=>$mobile_browser_type);
+	//Set a persistent client-side value to avoid having to detect again for this visitor
+	websitez_set_previous_detection($mobile_browser_status,$mobile_browser_type,$user_agent);
+	
+	return array('status'=>$mobile_browser_status,'type'=>$mobile_browser_type);
 }
 
 /*
 If it is a mobile device, lets try and remember to avoid having to detect it again
 */
 function websitez_set_previous_detection($status,$type,$user_agent){
-	if($status){
+	if($status=="true"){
 		//This is set to prevent caching mechanisms such as W3 total cache from caching the mobile page
 		setcookie("websitez_is_mobile", "true", time()+3600, "/");
 	}
-	$status = ($status == true) ? "true" : "false";
-	$s = setcookie("websitez_mobile_detector", $status."|".$type."|".md5($user_agent), time()+3600, "/");
+	
+	$s = setcookie(WEBSITEZ_COOKIE_NAME, $status."|".$type."|".md5($user_agent), time()+3600, "/");
 }
 
 /*
 Check to see if this mobile device has been previously detected
 */
 function websitez_check_previous_detection(){
-	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
+	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
 		//Returning a 0 will show the desktop version aka the 'fullsite'
 		//This is executed if the user elected to view the 'fullsite' version
 		return array('status'=>$obj[0],'type'=>'0');
-	}else if(isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
-		return array('status'=>$obj[0],'type'=>$obj[1]);
+	}else if(isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
+		if($obj[2] == md5($_SERVER['HTTP_USER_AGENT'])):
+			return array('status'=>$obj[0],'type'=>$obj[1]);
+		endif;
+		
+		return false;
 	}else{
 		return false;
 	}
