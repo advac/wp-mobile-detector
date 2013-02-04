@@ -1,4 +1,35 @@
 <?php
+function websitez_dashboard_setup(){
+	$websitez_show_dashboard_widget = get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME);
+	if($websitez_show_dashboard_widget == "true"):
+		wp_add_dashboard_widget('websitez_dashboard_widget', 'WP Mobile Detector Updates', 'websitez_dashboard_widget_function');
+		global $wp_meta_boxes;
+		
+		// Get the regular dashboard widgets array 
+		// (which has our new widget already but at the end)
+	
+		$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		
+		// Backup and delete our new dashbaord widget from the end of the array
+	
+		$example_widget_backup = array('websitez_dashboard_widget' => $normal_dashboard['websitez_dashboard_widget']);
+		unset($normal_dashboard['websitez_dashboard_widget']);
+	
+		// Merge the two arrays together so our widget is at the beginning
+	
+		$sorted_dashboard = array_merge($example_widget_backup, $normal_dashboard);
+	
+		// Save the sorted array back into the original metaboxes 
+	
+		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+	endif;
+}
+
+function websitez_dashboard_widget_function(){
+	$data = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/dashboard-feed.php","");
+	echo $data;
+}
+
 function websitez_get_mobile_device(){
 	global $websitez_mobile_device;
 	return $websitez_mobile_device;
@@ -107,7 +138,16 @@ function websitez_install(){
 		
 		if(!get_option(WEBSITEZ_ADVANCED_URL_REDIRECT))
 			add_option(WEBSITEZ_ADVANCED_URL_REDIRECT, '', '', 'yes');*/
-			
+		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME, WEBSITEZ_SHOW_MOBILE_ADS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME, WEBSITEZ_SHOW_MOBILE_TO_TABLETS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME))
+			add_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME, WEBSITEZ_SHOW_DASHBOARD_WIDGET, '', 'yes');
+		
 		if(!get_option(WEBSITEZ_RECORD_STATS_NAME))
 			add_option(WEBSITEZ_RECORD_STATS_NAME, WEBSITEZ_RECORD_STATS, '', 'yes');
 		
@@ -182,31 +222,51 @@ Filter content for an advanced mobile device
 */
 function websitez_filter_advanced_page($html){
 	if (class_exists('DOMDocument')) {
-		//Resize the images on the page
-		$dom = new DOMDocument();
-		$dom->loadHTML($html);
-	
-		// grab all the on the page and make sure they are the right size
-		$xpath = new DOMXPath($dom);
-		$imgs = $xpath->evaluate("/html/body//img");
-	
-		for ($i = 0; $i < $imgs->length; $i++) {
-			$img = $imgs->item($i);
-			$src = trim($img->getAttribute('src'));
-			$img->removeAttribute('width');
-			$img->removeAttribute('height');
-			//Use dynamic image resizer link
-			if(strlen($src) > 0){
-				$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
-				list($width, $height) = getimagesize($src);
-				if($width > $max_width){
-					$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$src."&w=".$max_width;
-					$img->setAttribute('src', $resize);
+		try{
+			//Resize the images on the page
+			$dom = new DOMDocument();
+			$dom->loadHTML($html);
+			
+			// grab all the on the page and make sure they are the right size
+			$xpath = new DOMXPath($dom);
+			$imgs = $xpath->evaluate("/html/body//img");
+			
+			for ($i = 0; $i < $imgs->length; $i++) {
+				$img = $imgs->item($i);
+				$src = trim($img->getAttribute('src'));
+				$img->removeAttribute('width');
+				$img->removeAttribute('height');
+				//Use dynamic image resizer link
+				if(strlen($src) > 0){
+					$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
+					list($width, $height) = getimagesize($src);
+					$blog_url = get_bloginfo('siteurl');
+					if($width > $max_width){
+						if(stripos($src,$blog_url) !== false):
+							$arr = explode("/",$src);
+							if(count($arr) > 4):
+								unset($arr[0]);
+								unset($arr[1]);
+								unset($arr[2]);
+								$src = "/".implode("/",$arr);
+							endif;
+						endif;
+						$tmp = parse_url($src);
+						if(strlen($tmp['host']) > 0):
+							$path = $tmp['scheme']."://".$tmp['host'].$tmp['path'];
+						else:
+							$path = $tmp['path'];
+						endif;
+						$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".urlencode($path)."&w=".$max_width;
+						$img->setAttribute('src', $resize);
+					}
 				}
 			}
+			
+			$stuff = $dom->saveHTML();
+		}catch(Exception $e){
+			$stuff = $html;
 		}
-	
-		$stuff = $dom->saveHTML();
 	}else{
 		$stuff = $html;
 	}
@@ -339,6 +399,57 @@ function websitez_checkInstalled(){
 }
 
 /*
+Check to make sure authorization token is set.
+*/
+function websitez_authorization(){
+	$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+	if(!$token):
+		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')));
+		if($response && $response['status'] == "1" && strlen($response['token']) > 0):
+			update_option(WEBSITEZ_PLUGIN_AUTHORIZATION,$response['token']);
+		endif;
+	endif;
+}
+
+function websitez_set_mobile_ads_buffer_append($html){
+	if(class_exists('DOMDocument')):
+		try{
+			$domain_token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+			$dom = new DOMDocument();
+			$xpath = new DOMXPath($dom);
+			$dom->loadHTML($html);
+			$body = $dom->getElementsByTagName('body')->item(0);
+
+	  	/* ad */
+	  	//http_build_query($_SERVER)
+	  	$ad_html = websitez_remote_request("http://adserver.websitez.com/php/ad.php?token=".$domain_token,http_build_query($_SERVER));
+	  	if(strlen($ad_html) > 11):
+				$div_a = $dom->createCDATASection($ad_html);
+	  		$body->appendChild($div_a);
+	  	endif;
+	  	
+			$html = $dom->saveHTML();  
+		}catch (Exception $e){  
+			//Do nothing for now.  
+		}
+	endif;
+	
+	return $html;
+}
+
+/*
+Ad mobile ads to the top and bottom of the page
+*/
+function websitez_set_mobile_ads_buffer(){
+	//Don't filter Dashboard pages and the feed
+	if (is_feed() || is_admin()){
+		return;
+	}
+
+	ob_start("websitez_set_mobile_ads_buffer_append");
+}
+
+/*
 Change where it looks for themes on the frond end
 */
 function websitez_setThemeFolderFront(){
@@ -376,13 +487,17 @@ function websitez_check_and_act_mobile(){
 	websitez_set_mobile_device($mobile_device);
 	
 	//Is it a mobile device?
-	if($mobile_device['status'] == true || $mobile_device['status'] == "1"){
+	if($mobile_device['status'] == "true"){
 		//Record a mobile visit only on the regular site and if it is enabled
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
 			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
+		$websitez_show_mobile_ads = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($websitez_show_mobile_ads != "false"):
+			add_action('wp', 'websitez_set_mobile_ads_buffer', 10, 0);
+		endif;
 
 		if($mobile_device['type'] == "2"){ //Standard device
 			$option = get_option(WEBSITEZ_BASIC_THEME);
@@ -493,9 +608,10 @@ function websitez_web_head(){
 Attribution and ability to switch between mobile and full site
 */
 function websitez_web_head_mobile(){
+	$cookie_name = WEBSITEZ_COOKIE_NAME;
 	echo "<script type='text/javascript'>\n
 	function websitez_setMobileSite(){\n
-		websitez_setCookie('websitez_mobile_detector','',-1);
+		websitez_setCookie('$cookie_name','',-1);
 		websitez_setCookie('websitez_mobile_detector_fullsite','',-1);
 		window.location.reload();\n
 	}\n
@@ -526,12 +642,28 @@ function websitez_detect_mobile_device(){
   $accept = $_SERVER['HTTP_ACCEPT'];
 	//Type of phone
 	$mobile_browser_type = "0"; //0 - PC, 1 - Smart Phone, 2- Standard Phone
+	
+	$show_mobile_to_tablets = get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME);
 
 	switch(true){
+		case (preg_match('/ipad/i',$user_agent)||preg_match('/kindle/i',$user_agent)||preg_match('/nook/i',$user_agent)); //Tablets
+			if($show_mobile_to_tablets == 'true'):
+				$mobile_browser = true;
+				$mobile_browser_type = "1"; //Smart Phone
+			else:
+				$mobile_browser = false;
+				$mobile_browser_type = "0"; //Smart Phone
+			endif;
+    break;
 		/*
 		Start off with smart phones or smart devices
 		*/
-		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)||preg_match('/ipad/i',$user_agent)); //iPhone or iPod
+		case (preg_match('/ipad/i',$user_agent)); //Tablets
+      $mobile_browser = true;
+			$mobile_browser_type = "1"; //Smart Phone
+    break;
+		
+		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)); //iPhone or iPod
       $mobile_browser = true;
 			$mobile_browser_type = "1"; //Smart Phone
     break;
@@ -600,35 +732,42 @@ function websitez_detect_mobile_device(){
 		break;
 	}
 	
-	//Set a persistent client-side value to avoid having to detect again for this visitor
-	websitez_set_previous_detection($mobile_browser,$mobile_browser_type,$user_agent);
+	$mobile_browser_status = ($mobile_browser == true) ? "true" : "false";
 	
-	return array('status'=>$mobile_browser,'type'=>$mobile_browser_type);
+	//Set a persistent client-side value to avoid having to detect again for this visitor
+	websitez_set_previous_detection($mobile_browser_status,$mobile_browser_type,$user_agent);
+	
+	return array('status'=>$mobile_browser_status,'type'=>$mobile_browser_type);
 }
 
 /*
 If it is a mobile device, lets try and remember to avoid having to detect it again
 */
 function websitez_set_previous_detection($status,$type,$user_agent){
-	if($status){
+	if($status=="true"){
 		//This is set to prevent caching mechanisms such as W3 total cache from caching the mobile page
 		setcookie("websitez_is_mobile", "true", time()+3600, "/");
 	}
-	setcookie("websitez_mobile_detector", $status."|".$type."|".md5($user_agent), time()+3600, "/");
+	
+	$s = setcookie(WEBSITEZ_COOKIE_NAME, $status."|".$type."|".md5($user_agent), time()+3600, "/");
 }
 
 /*
 Check to see if this mobile device has been previously detected
 */
 function websitez_check_previous_detection(){
-	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
+	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
 		//Returning a 0 will show the desktop version aka the 'fullsite'
 		//This is executed if the user elected to view the 'fullsite' version
 		return array('status'=>$obj[0],'type'=>'0');
-	}else if(isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
-		return array('status'=>$obj[0],'type'=>$obj[1]);
+	}else if(isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
+		if($obj[2] == md5($_SERVER['HTTP_USER_AGENT'])):
+			return array('status'=>$obj[0],'type'=>$obj[1]);
+		endif;
+		
+		return false;
 	}else{
 		return false;
 	}
@@ -674,7 +813,7 @@ function websitez_get_themes($path = null, $only_mobile = false) {
 		$wp_theme_directories = array($path);
 	}
 
-	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories())
+	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories(true))
 		return false;
 
 	asort( $theme_files );
@@ -962,5 +1101,31 @@ function websitez_kpr(){
 	{
 		return $kpr_phrase[10];
 	}
+}
+
+/*
+Check for CURL
+*/
+function websitez_iscurlinstalled() {
+	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/*
+Perform CURL
+*/
+function websitez_remote_request($host,$path){
+	$fp = curl_init($host);
+	curl_setopt($fp, CURLOPT_POST, true);
+	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
+	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($fp, CURLOPT_CONNECTTIMEOUT, 5);
+	$page = curl_exec($fp);
+	curl_close($fp);
+	
+	return $page;
 }
 ?>
