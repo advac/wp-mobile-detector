@@ -66,6 +66,7 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 8. Viper Mobile Theme
 9. Anakin Mobile Theme
 10. Bluesteel Mobile Theme
+11. WZ Mobile Theme
 
 == Changelog ==
 
