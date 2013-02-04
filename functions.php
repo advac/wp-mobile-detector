@@ -139,6 +139,9 @@ function websitez_install(){
 		if(!get_option(WEBSITEZ_ADVANCED_URL_REDIRECT))
 			add_option(WEBSITEZ_ADVANCED_URL_REDIRECT, '', '', 'yes');*/
 		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME, WEBSITEZ_SHOW_MOBILE_ADS, '', 'yes');
+		
 		if(!get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME))
 			add_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME, WEBSITEZ_SHOW_MOBILE_TO_TABLETS, '', 'yes');
 		
@@ -408,23 +411,24 @@ function websitez_authorization(){
 	endif;
 }
 
-/*
-Append a pixel to the bottom of the page for mobile stats
-*/
-function websitez_set_stat_pixel_buffer_append($html){
+function websitez_set_mobile_ads_buffer_append($html){
 	if(class_exists('DOMDocument')):
 		try{
-			$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+			$domain_token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
 			$dom = new DOMDocument();
 			$xpath = new DOMXPath($dom);
 			$dom->loadHTML($html);
-			$img = $dom->createElement("img");
-	  	$img->setAttribute("src","http://stats.websitez.com/record.php?token=".$token);
-	  	$img->setAttribute("width","1");
-	  	$img->setAttribute("height","1");
-	  	$body = $dom->getElementsByTagName('body')->item(0);
-	  	$body->appendChild($img);
-			$html = $dom->saveHTML();	  
+			$body = $dom->getElementsByTagName('body')->item(0);
+
+	  	/* ad */
+	  	//http_build_query($_SERVER)
+	  	$ad_html = websitez_remote_request("http://adserver.websitez.com/php/ad.php?token=".$domain_token,http_build_query($_SERVER));
+	  	if(strlen($ad_html) > 11):
+				$div_a = $dom->createCDATASection($ad_html);
+	  		$body->appendChild($div_a);
+	  	endif;
+	  	
+			$html = $dom->saveHTML();  
 		}catch (Exception $e){  
 			//Do nothing for now.  
 		}
@@ -434,15 +438,15 @@ function websitez_set_stat_pixel_buffer_append($html){
 }
 
 /*
-Start the buffer to filter the raw contents of a page
+Ad mobile ads to the top and bottom of the page
 */
-function websitez_set_stat_pixel_buffer(){
+function websitez_set_mobile_ads_buffer(){
 	//Don't filter Dashboard pages and the feed
 	if (is_feed() || is_admin()){
 		return;
 	}
 
-	ob_start("websitez_set_stat_pixel_buffer_append");
+	ob_start("websitez_set_mobile_ads_buffer_append");
 }
 
 /*
@@ -490,7 +494,10 @@ function websitez_check_and_act_mobile(){
 		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
 			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
-		add_action('wp', 'websitez_set_stat_pixel_buffer', 10, 0);
+		$websitez_show_mobile_ads = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($websitez_show_mobile_ads != "false"):
+			add_action('wp', 'websitez_set_mobile_ads_buffer', 10, 0);
+		endif;
 
 		if($mobile_device['type'] == "2"){ //Standard device
 			$option = get_option(WEBSITEZ_BASIC_THEME);
@@ -1115,6 +1122,7 @@ function websitez_remote_request($host,$path){
 	curl_setopt($fp, CURLOPT_POST, true);
 	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
 	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($fp, CURLOPT_CONNECTTIMEOUT, 5);
 	$page = curl_exec($fp);
 	curl_close($fp);
 	
