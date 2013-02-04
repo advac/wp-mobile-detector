@@ -226,14 +226,14 @@ a:hover {
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("http://furnished.websitez.com/wp-content/themes/wordpress-bootstrap/library/img/glyphicons-halflings.png");
+  background-image: url("glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   margin-top: 1px;
 }
 
 .icon-white {
-  background-image: url("http://furnished.websitez.com/wp-content/themes/wordpress-bootstrap/library/img/glyphicons-halflings-white.png");
+  background-image: url("glyphicons-halflings-white.png");
 }
 
 .icon-th-list {
@@ -258,6 +258,10 @@ a:hover {
 
 .icon-arrow-left {
   background-position: -240px -96px;
+}
+
+.icon-arrow-right {
+  background-position: -264px -96px;
 }
 
 .icon-share {
@@ -642,6 +646,32 @@ Comments
 }
 
 /* END COMMENTS */
+
+/* PAGINATION */
+
+#pagination {
+	background-image:-webkit-gradient(linear, left top, left bottom, from(#585858), to(#555));
+	padding: 10px;
+}
+
+#pagination a{
+	color: #fff;
+}
+
+#pagination #previous{
+	float: left;
+	width: 50%;
+}
+
+
+
+#pagination #next{
+	float: right;
+	width: 50%;
+	text-align: right;
+}
+
+/* END PAGINATION */
 
 /*
 IOS Fixes pulled from jQuery Mobile
