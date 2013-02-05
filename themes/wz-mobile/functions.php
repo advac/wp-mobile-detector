@@ -4,7 +4,7 @@ error_reporting(0);
 add_filter('show_admin_bar', '__return_false');
 
 function wz_boot_footer_scripts() {
-    echo '<script type="text/javascript" src="'.get_template_directory_uri().'/js/jmobile.js"></script><script type="text/javascript" src="'.get_template_directory_uri().'/js/wz_mobile.js"></script>';
+    echo '<script type="text/javascript" src="'.get_template_directory_uri().'/js/jmobile.min.js"></script><script type="text/javascript" src="'.get_template_directory_uri().'/js/wz_mobile.min.js"></script>';
 }
 add_action('wp_footer', 'wz_boot_footer_scripts');
 
