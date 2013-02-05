@@ -2,26 +2,16 @@
 	<div class="element">
 		<h3><i class="icon-retweet icon-white"></i> Share</h3>
 		<ul>
-			<a href=""><li>
+			<a href="http://www.twitter.com/share?url=<?php echo wz_get_current_encoded_url(); ?>" target="_blank" rel="nofollow"><li>
 				Twitter
 			</li></a>
-			<a href=""><li>
+			<a href="http://www.facebook.com/sharer.php?u=<?php echo wz_get_current_encoded_url(); ?>&t=<?php wp_title(); ?>" target="_blank"><li>
 				Facebook
-			</li></a>
-			<a href=""><li>
-				E-Mail
 			</li></a>
 		</ul>
 	</div>
 	<div class="element">
 		<h3>Manage</h3>
-		<ul>
-			<li>
-				<a href="">Bookmark</a>
-			</li>
-		</ul>
-	</div>
-	<div class="element">
 		<?php wp_footer(); ?>
 	</div>
 </div><!-- END RBMENU -->

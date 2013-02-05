@@ -141,4 +141,8 @@ function wz_comment($comment, $args, $depth){
 	</div>
 <?php
 }
+
+function wz_get_current_encoded_url(){
+	return urlencode(get_option('home').$_SERVER['REQUEST_URI']);
+}
 ?>

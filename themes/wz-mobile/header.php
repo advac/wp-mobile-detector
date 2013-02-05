@@ -2,7 +2,7 @@
 <html class="ui-mobile" <?php language_attributes(); ?>>
 	<head profile="http://gmpg.org/xfn/11">
 		<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>">
-		<title><?php the_title(); ?></title>
+		<title><?php wp_title(); ?></title>
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">

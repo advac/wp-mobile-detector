@@ -41,8 +41,15 @@
 					</a>
 				<?php endwhile; ?>
 				</div>
-			<?php else : ?>
-			
+				<div id="pagination">
+					<div id="previous">
+						<?php previous_posts_link('<i class="icon-arrow-left icon-white"></i> Newer Entries', 0) ?>
+					</div>
+					<div id="next">
+						<?php next_posts_link('Older Entries <i class="icon-arrow-right icon-white"></i>', 0); ?>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
 			<?php endif; ?>
 		</div><!-- END CONTENT -->
 		
