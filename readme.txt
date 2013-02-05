@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.5.1
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 
 The WP Mobile Detector automatically detects over 5,000 mobile devices and displays a compatible mobile theme.
 
