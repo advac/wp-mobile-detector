@@ -16,6 +16,7 @@ Register the link on the left sidebar in the administration interface
 function websitez_configuration_menu(){
 	add_menu_page( __( WEBSITEZ_PLUGIN_NAME, 'Websitez' ), __( '<span style="font-size:12px;">'.__(WEBSITEZ_PLUGIN_NAME).'</span>', 'Websitez' ), 8, 'websitez_config', 'websitez_configuration_page',plugin_dir_url(__FILE__).'images/phone_icon_16x16.png');
 	add_submenu_page( 'websitez_config', __('Settings', 'Websitez'), __('Settings', 'Websitez'), 8, 'websitez_config', 'websitez_configuration_page' );
+	add_submenu_page( 'websitez_config', __('Mobile Monetization', 'Websitez'), __('Mobile Monetization', 'Websitez'), 8, 'websitez_monetization', 'websitez_monetization_page' );
 	add_submenu_page( 'websitez_config', __('Stats', 'Websitez'), __('Stats', 'Websitez'), 8, 'websitez_stats', 'websitez_stats_page' );
 	add_submenu_page( 'websitez_config', __('Mobile Themes', 'Websitez'), __('Mobile Themes', 'Websitez'), 8, 'websitez_themes', 'websitez_themes_page' );
 }
@@ -461,6 +462,91 @@ function websitez_configuration_page()
 			_e(websitez_dynamic_footer());
 			?>
 		</div>
+</div>
+<?php
+}
+
+function websitez_monetization_page() 
+{
+	global $wpdb, $websitez_plugin_description, $table_prefix, $websitez_free_version;
+	
+	if(isset($_GET['hide']) && $_GET['hide'] == "true"):
+		update_option(WEBSITEZ_MONETIZATION_MESSAGE, date("Y-m-d H:i:s"));
+	endif;
+	
+	if($_GET['monetization'] == "true" || $_GET['monetization'] == "false"):
+		update_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME, $_GET['monetization']);
+	endif;
+	
+	if($_POST):
+		$monetization = $_POST['monetization'];
+		if($monetization == "true" || $monetization == "false"):
+			if(update_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME, $monetization)):
+				$u = true;
+			else:
+				$u = false;
+			endif;
+			
+			if(!$u):
+				echo '<div id="message" class="updated fade"><p><strong>An error occurred, please try again.</strong></p></div>';
+			endif;
+		endif;
+	endif;
+	
+	$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+?>
+<div>
+
+	<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME." - Mobile Monetization") ); ?></h1>
+	<p><?php _e('Would you like the WP Mobile Detector plugin to monetize your mobile traffic and <strong>send you a payout every month</strong>?') ?></p>
+	<p><?php _e('By enabling monetization below, the WP Mobile Detector will run non-obtrusive mobile advertisements on your website. Any revenue generated from such advertisements will be shared with you on a monthly basis.') ?></p>
+	<p><?php _e('Join over 32,000 websites that are <strong>already making money</strong>, it is as easy as clicking the enable button below!') ?></p>
+	<style>
+	table{
+		border: 0px;
+	}
+	table td{
+		border: 0px !important;
+	}
+	</style>
+	<div class="" style="margin:10px 0; padding:20px;background-color:#FFFEEB;">
+		<?php if($monetization != "false"): ?>
+			<table width="100%">
+				<tr>
+					<td width="50%">
+						<h2 style="padding: 0px; color: #3aac1b;">Monetization is currently enabled!</h2>
+					</td>
+					<td width="50%">
+						<form action="" method="POST">
+							<input type="hidden" name="monetization" value="false">
+							<input type="submit" value="Disable" class="button button-large button-primary">
+						</form>
+					</td>
+				</tr>
+			</table>
+		<?php else: ?>
+			<table width="100%">
+				<tr>
+					<td width="50%">
+						<h2 style="padding: 0px; color: #d23030;">Monetization is currently disabled!</h2>
+					</td>
+					<td width="50%">
+						<form action="" method="POST">
+							<input type="hidden" name="monetization" value="true">
+							<input type="submit" value="Enable" class="button button-large button-primary">
+						</form>
+					</td>
+				</tr>
+			</table>
+		<?php endif; ?>
+	</div>
+
+	<p><?php _e('<strong>Quick Links</strong>'); ?></p>
+	<ul>
+	<li><?php _e('<a href="http://websitez.com/monetization" target="_blank">How does it work?</a>'); ?></li>
+	<li><?php _e('<a href="http://websitez.com/partners?partner_id='.get_option(WEBSITEZ_PLUGIN_AUTHORIZATION).'" target="_blank">Request A Payout</a>'); ?></li>
+	<li><?php _e('<a href="mailto:support@websitez.com?subject=Monetization%20Support">Contact Support</a>'); ?></li>
+	</ul>
 </div>
 <?php
 }
