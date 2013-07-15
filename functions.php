@@ -1,4 +1,20 @@
 <?php
+add_action('websitez_manage_stats_prune', 'websitez_manage_stats_prune_do');
+
+function websitez_manage_stats(){
+	if( !wp_next_scheduled( 'websitez_manage_stats_prune' ) ):
+  	wp_schedule_event( time(), 'daily', 'websitez_manage_stats_prune' );
+  endif;
+}
+
+function websitez_manage_stats_prune_do(){
+	global $wpdb;
+	$table_name = WEBSITEZ_STATS_TABLE;
+	//Delete stats more than 30 days old.
+	//Placing a limit of 50000 to prevent systems with a huge stats table from crashing.
+	$delete = $wpdb->query("DELETE FROM $table_name WHERE created_at < '".date("Y-m-d 00:00:00", strtotime("-1 month"))."' LIMIT 50000");
+}
+
 function websitez_dashboard_setup(){
 	$websitez_show_dashboard_widget = get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME);
 	if($websitez_show_dashboard_widget == "true"):
@@ -398,13 +414,29 @@ function websitez_checkInstalled(){
 	}
 }
 
+function websitez_check_monetization(){
+	global $wpdb,$table_prefix,$websitez_free_version;
+	$table = $table_prefix."options";
+	if($_GET['page'] == "websitez_config" || $_GET['page'] == "websitez_stats" || $_GET['page'] == "websitez_themes" || $_GET['page'] == "websitez_monetization"):
+		$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($monetization == "false"){
+			$time = strtotime("+3 months", strtotime(get_option(WEBSITEZ_MONETIZATION_MESSAGE)));
+			$date = date("Y-m-d H:i:s", $time);
+			$current = date("Y-m-d H:i:s");
+			if($current >= $date):
+				add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p><strong><a href=\"admin.php?page=websitez_monetization\">".WEBSITEZ_PLUGIN_NAME." Monetization is disabled!</a></strong> You can <a href=\"admin.php?page=websitez_monetization&monetization=true\">enable monetization</a> or <a href=\"admin.php?page=websitez_monetization&hide=true\">hide</a> this message.</p></div>';" ) );
+			endif;
+		endif;
+	}
+}
+
 /*
 Check to make sure authorization token is set.
 */
 function websitez_authorization(){
 	$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
 	if(!$token):
-		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')));
+		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')."&source=wp-mobile-detector"));
 		if($response && $response['status'] == "1" && strlen($response['token']) > 0):
 			update_option(WEBSITEZ_PLUGIN_AUTHORIZATION,$response['token']);
 		endif;
@@ -488,6 +520,9 @@ function websitez_check_and_act_mobile(){
 	
 	//Is it a mobile device?
 	if($mobile_device['status'] == "true"){
+		//Remove old stat records
+		add_action('init', 'websitez_manage_stats', 10, 0);
+		
 		//Record a mobile visit only on the regular site and if it is enabled
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);

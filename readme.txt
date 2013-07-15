@@ -4,7 +4,7 @@ Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 3.5.1
-Stable tag: 1.7.6
+Stable tag: 1.7.9
 
 The WP Mobile Detector automatically detects over 5,000 mobile devices and displays a compatible mobile theme.
 
@@ -69,6 +69,13 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 11. WZ Mobile Theme
 
 == Changelog ==
+
+= 1.7.9 =
++ Fixing administration area messages
+
+= 1.7.8 =
++ Adding mobile ad monetization feature
++ Pruning old stats to reduce table size
 
 = 1.7.7 =
 
