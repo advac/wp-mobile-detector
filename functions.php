@@ -417,13 +417,13 @@ function websitez_checkInstalled(){
 function websitez_check_monetization(){
 	global $wpdb,$table_prefix,$websitez_free_version;
 	$table = $table_prefix."options";
-	$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
-	if($monetization == "false"){
-		$time = strtotime("+3 months", strtotime(get_option(WEBSITEZ_MONETIZATION_MESSAGE)));
-		$date = date("Y-m-d H:i:s", $time);
-		$current = date("Y-m-d H:i:s");
-		if($current >= $date):
-			if($_GET['page'] != "websitez_monetization"):
+	if($_GET['page'] == "websitez_config" || $_GET['page'] == "websitez_stats" || $_GET['page'] == "websitez_themes" || $_GET['page'] == "websitez_monetization"):
+		$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($monetization == "false"){
+			$time = strtotime("+3 months", strtotime(get_option(WEBSITEZ_MONETIZATION_MESSAGE)));
+			$date = date("Y-m-d H:i:s", $time);
+			$current = date("Y-m-d H:i:s");
+			if($current >= $date):
 				add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p><strong><a href=\"admin.php?page=websitez_monetization\">".WEBSITEZ_PLUGIN_NAME." Monetization is disabled!</a></strong> You can <a href=\"admin.php?page=websitez_monetization&monetization=true\">enable monetization</a> or <a href=\"admin.php?page=websitez_monetization&hide=true\">hide</a> this message.</p></div>';" ) );
 			endif;
 		endif;
@@ -454,7 +454,7 @@ function websitez_set_mobile_ads_buffer_append($html){
 
 	  	/* ad */
 	  	//http_build_query($_SERVER)
-	  	$ad_html = websitez_remote_request("http://173.208.150.202/~adserver/php/ad.php?token=".$domain_token,http_build_query($_SERVER));
+	  	$ad_html = websitez_remote_request("http://adserver.websitez.com/php/ad.php?token=".$domain_token,http_build_query($_SERVER));
 	  	if(strlen($ad_html) > 11):
 				$div_a = $dom->createCDATASection($ad_html);
 	  		$body->appendChild($div_a);
