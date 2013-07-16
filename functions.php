@@ -419,7 +419,7 @@ function websitez_check_monetization(){
 	$table = $table_prefix."options";
 	if($_GET['page'] == "websitez_config" || $_GET['page'] == "websitez_stats" || $_GET['page'] == "websitez_themes" || $_GET['page'] == "websitez_monetization"):
 		$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
-		if($monetization == "false"){
+		if($monetization == "false"):
 			$time = strtotime("+3 months", strtotime(get_option(WEBSITEZ_MONETIZATION_MESSAGE)));
 			$date = date("Y-m-d H:i:s", $time);
 			$current = date("Y-m-d H:i:s");
@@ -427,7 +427,7 @@ function websitez_check_monetization(){
 				add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p><strong><a href=\"admin.php?page=websitez_monetization\">".WEBSITEZ_PLUGIN_NAME." Monetization is disabled!</a></strong> You can <a href=\"admin.php?page=websitez_monetization&monetization=true\">enable monetization</a> or <a href=\"admin.php?page=websitez_monetization&hide=true\">hide</a> this message.</p></div>';" ) );
 			endif;
 		endif;
-	}
+	endif;
 }
 
 /*
