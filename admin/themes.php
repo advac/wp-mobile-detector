@@ -74,14 +74,14 @@ function websitez_themes_page(){
 				<div class="head">
 					<?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME." - Mobile Themes") ); ?>
 					<ul class="nav">
-						<li><?php echo sprintf(__( "%sUpgrade to WP Mobile Detector PRO%s", "wp-mobile-detector" ), '<a href="http://websitez.com" target="_blank">','</a>'); ?></li>
-						<li><?php echo sprintf(__( "%sRead User's Guide%s", "wp-mobile-detector" ), '<a href="http://websitez.com/wp-mobile-detector-guide/" target="_blank">','</a>'); ?></li>
+						<li><?php echo sprintf(__( "%sUpgrade to WP Mobile Detector PRO%s", "wp-mobile-detector" ), '<a href="http://websitez.com/?utm_campaign=wp-admin-upgrade-link&utm_medium=web" target="_blank">','</a>'); ?></li>
+						<li><?php echo sprintf(__( "%sRead User's Guide%s", "wp-mobile-detector" ), '<a href="http://websitez.com/wp-mobile-detector-guide/?utm_campaign=wp-admin-guide&utm_medium=web" target="_blank">','</a>'); ?></li>
 						<li><?php echo sprintf(__( "%sWP Mobile Detector on Twitter%s", "wp-mobile-detector" ), '<a href="http://www.twitter.com/websitezcom" target="_blank">','</a>'); ?></li>
 					</ul>
 				</div>
 				<div class="body">
-					<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch.png" border="0" class="desc"></a>
-					<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch-right.png" border="0" class="pic"></a>
+					<a href="http://websitez.com/?utm_campaign=wp-admin-l-image&utm_medium=web" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch.png" border="0" class="desc"></a>
+					<a href="http://websitez.com/?utm_campaign=wp-admin-r-image&utm_medium=web" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch-right.png" border="0" class="pic"></a>
 				</div>
 			</div>
 		</td>
