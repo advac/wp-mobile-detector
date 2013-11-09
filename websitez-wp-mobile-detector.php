@@ -1,12 +1,12 @@
 <?php
 /*
- Plugin Name: WP Mobile Detector
+ Plugin Name: WP Mobile Detector Mobile Plugin
  Plugin URI: http://www.websitez.com/
- Description: The WP Mobile Detector wordpress plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each. This plugin is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
+ Description: The WP Mobile Detector wordpress mobile plugin automatically detects if the visitor is using a standard mobile phone or a smart phone and loads a compatible wordpress mobile theme for each. This mobile plugin is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
- Version: 1.7.9
+ Version: 1.8
  Author: Websitez.com
- Author URI: http://www.websitez.com
+ Author URI: http://websitez.com
 */
 
 /*
@@ -25,7 +25,7 @@ $websitez_mobile_device = array();
 /*
 Define Globals
 */
-define('WEBSITEZ_COOKIE_NAME', 'websitez_mobile_detector_v1-7-5');
+define('WEBSITEZ_COOKIE_NAME', 'websitez_mobile_detector_v1-8');
 define('WEBSITEZ_PLUGIN_NAME', 'WP Mobile Detector');
 define('WEBSITEZ_PLUGIN_AUTHORIZATION', 'wp_mobile_detector_token');
 define('WEBSITEZ_PLUGIN_DIR', dirname(__FILE__));
@@ -73,7 +73,7 @@ if(is_admin()) {
 	//Check to make sure plugin is installed properly
 	add_action('init', 'websitez_checkInstalled');
 	add_action('init', 'websitez_authorization');
-	add_action('init', 'websitez_check_monetization');
+	//add_action('init', 'websitez_check_monetization');
 	add_action('wp_dashboard_setup', 'websitez_dashboard_setup' );
 }
 

@@ -7,7 +7,7 @@ add_action('admin_head', 'websitez_admin_head');
 
 function websitez_admin_head()
 {
-	//echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
+	echo "<link rel='stylesheet' id='mobiledetector-css'  href='".plugin_dir_url(__FILE__)."css/style.css' type='text/css' media='all' />";
 }
 
 /*
@@ -16,7 +16,7 @@ Register the link on the left sidebar in the administration interface
 function websitez_configuration_menu(){
 	add_menu_page( __( WEBSITEZ_PLUGIN_NAME, 'Websitez' ), __( '<span style="font-size:12px;">'.__(WEBSITEZ_PLUGIN_NAME).'</span>', 'Websitez' ), 8, 'websitez_config', 'websitez_configuration_page',plugin_dir_url(__FILE__).'images/phone_icon_16x16.png');
 	add_submenu_page( 'websitez_config', __('Settings', 'Websitez'), __('Settings', 'Websitez'), 8, 'websitez_config', 'websitez_configuration_page' );
-	add_submenu_page( 'websitez_config', __('Mobile Monetization', 'Websitez'), __('Mobile Monetization', 'Websitez'), 8, 'websitez_monetization', 'websitez_monetization_page' );
+	//add_submenu_page( 'websitez_config', __('Mobile Monetization', 'Websitez'), __('Mobile Monetization', 'Websitez'), 8, 'websitez_monetization', 'websitez_monetization_page' );
 	add_submenu_page( 'websitez_config', __('Stats', 'Websitez'), __('Stats', 'Websitez'), 8, 'websitez_stats', 'websitez_stats_page' );
 	add_submenu_page( 'websitez_config', __('Mobile Themes', 'Websitez'), __('Mobile Themes', 'Websitez'), 8, 'websitez_themes', 'websitez_themes_page' );
 }
@@ -28,12 +28,23 @@ function websitez_stats_page(){
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td valign="top">
-					<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME." - Statistics") ); ?></h1>
-					<p><?php _e('View detailed mobile visitor statistics from users who visit your site from a mobile device.');?></p>
+					<div class="wz_pro">
+						<div class="head">
+							<?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME." - Statistics") ); ?>
+							<ul class="nav">
+								<li><?php echo sprintf(__( "%sUpgrade to WP Mobile Detector PRO%s", "wp-mobile-detector" ), '<a href="http://websitez.com" target="_blank">','</a>'); ?></li>
+								<li><?php echo sprintf(__( "%sRead User's Guide%s", "wp-mobile-detector" ), '<a href="http://websitez.com/wp-mobile-detector-guide/" target="_blank">','</a>'); ?></li>
+								<li><?php echo sprintf(__( "%sWP Mobile Detector on Twitter%s", "wp-mobile-detector" ), '<a href="http://www.twitter.com/websitezcom" target="_blank">','</a>'); ?></li>
+							</ul>
+						</div>
+						<div class="body">
+							<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch.png" border="0" class="desc"></a>
+							<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch-right.png" border="0" class="pic"></a>
+						</div>
+					</div>
 				</td>
 			</tr>
 		</table>
-		<h2 style="padding-top: 0px;"><?php _e('Mobile Statistics')?></h2>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	  <script type="text/javascript">
 	    google.load("visualization", "1", {packages:["corechart"]});
@@ -238,12 +249,21 @@ function websitez_configuration_page()
 <div class="wrap">
 	<table width="100%" cellpadding="0" cellspacing="0">
 		<tr>
-			<td width="60%" valign="top">
-				<h1><?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?></h1>
-				<p><?php _e('Configure the settings for the WP Mobile Detector plugin.') ?></p>
-			</td>
-			<td width="40%" valign="top" align="right" style="padding: 15px 15px 0px 0px">
-				<p><a href="http://ready.mobi/results.jsp?uri=<?php echo bloginfo('url'); ?>&ref=websitez-com-wp-mobile-detector" target="_blank" title="<?php _e('Check the mobile readiness of this website.') ?>"><img src="<?php echo plugin_dir_url(__FILE__).'images/check-mobile-readiness.jpg'?>" border="0" alt="<?php _e('Check the mobile readiness of this website.') ?>"></a></p>
+			<td width="100%" valign="top">
+				<div class="wz_pro">
+					<div class="head">
+						<?php echo esc_html( __(WEBSITEZ_PLUGIN_NAME) ); ?>
+						<ul class="nav">
+							<li><?php echo sprintf(__( "%sUpgrade to WP Mobile Detector PRO%s", "wp-mobile-detector" ), '<a href="http://websitez.com" target="_blank">','</a>'); ?></li>
+							<li><?php echo sprintf(__( "%sRead User's Guide%s", "wp-mobile-detector" ), '<a href="http://websitez.com/wp-mobile-detector-guide/" target="_blank">','</a>'); ?></li>
+							<li><?php echo sprintf(__( "%sWP Mobile Detector on Twitter%s", "wp-mobile-detector" ), '<a href="http://www.twitter.com/websitezcom" target="_blank">','</a>'); ?></li>
+						</ul>
+					</div>
+					<div class="body">
+						<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch.png" border="0" class="desc"></a>
+						<a href="http://websitez.com" target="_blank"><img src="http://img.websitez.com/websitez-pro-pitch-right.png" border="0" class="pic"></a>
+					</div>
+				</div>
 			</td>
 		</tr>
 	</table>

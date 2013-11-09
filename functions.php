@@ -1,4 +1,14 @@
 <?php
+add_filter('plugin_action_links', 'websitez_settings_link', 10, 2 );
+
+function websitez_settings_link( $links, $file ) {
+ 	if( $file == 'wp-mobile-detector/websitez-wp-mobile-detector.php' && function_exists( "admin_url" ) ) {
+		$settings_link = '<a href="' . admin_url( 'admin.php?page=websitez_config' ) . '">' . __('Settings') . '</a>';
+		array_push( $links, $settings_link ); // after other links
+	}
+	return $links;
+}
+
 add_action('websitez_manage_stats_prune', 'websitez_manage_stats_prune_do');
 
 function websitez_manage_stats(){
@@ -404,6 +414,9 @@ When in the admin area, this will alert the admin if the plugin is not installed
 */
 function websitez_checkInstalled(){
 	global $wpdb,$table_prefix,$websitez_free_version;
+	if(isset($_GET['websitez-plugin-notice'])):
+		update_option('WEBSITEZ_OTHER_PLUGINS_CHECK', 'false');
+	endif;
 	$table = $table_prefix."options";
 	if(!get_option(WEBSITEZ_BASIC_THEME) || !get_option(WEBSITEZ_ADVANCED_THEME)){
 		if($websitez_free_version == true){
@@ -412,6 +425,24 @@ function websitez_checkInstalled(){
 			add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>".WEBSITEZ_PLUGIN_NAME." was unable to install correctly. This domain is not authorized to use this plugin.</p><p><strong>Please contact support@websitez.com</strong></p></div>';" ) );
 		}
 	}
+	$plugin_notice = false;
+	$plugins = get_option('active_plugins');
+	foreach($plugins as $plugin):
+		if(stripos($plugin,"w3-total-cache") !== false):
+			$plugin_notice = true;
+		endif;
+	endforeach;
+	if(get_option('WEBSITEZ_OTHER_PLUGINS_CHECK') == 'false'):
+		$plugin_notice = false;
+	endif;
+	if($plugin_notice):
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>There are plugins installed that require slight modifications to work with the <strong>".WEBSITEZ_PLUGIN_NAME."</strong> plugin. Please read this short blog post that will help you resolve these issues quickly: <a href=\"http://websitez.com/resolving-plugin-conflicts-with-wp-mobile-detector/\" target=\"_blank\">http://websitez.com/resolving-plugin-conflicts-with-wp-mobile-detector/</a></p><p><a href=\"?websitez-plugin-notice=hide\">Hide This Notice</a></p></div>';" ) );
+	endif;
+	$cache = WEBSITEZ_PLUGIN_DIR.'/cache/';
+	$permissions = substr(sprintf('%o', fileperms($cache)), -4);
+	if($permissions != "0777"):
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>Please set the permissions on this folder (".$cache.") to be 777 to allow the <strong>WP Mobile Detector</strong> to work properly.</p><p>Execute the following command via SSH:<br><strong>chmod 777 ".$cache."</strong></p></div>';" ) );
+	endif;
 }
 
 function websitez_check_monetization(){
