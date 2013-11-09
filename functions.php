@@ -1,4 +1,90 @@
-<?
+<?php
+add_filter('plugin_action_links', 'websitez_settings_link', 10, 2 );
+
+function websitez_settings_link( $links, $file ) {
+ 	if( $file == 'wp-mobile-detector/websitez-wp-mobile-detector.php' && function_exists( "admin_url" ) ) {
+		$settings_link = '<a href="' . admin_url( 'admin.php?page=websitez_config' ) . '">' . __('Settings') . '</a>';
+		array_push( $links, $settings_link ); // after other links
+	}
+	return $links;
+}
+
+add_action('websitez_manage_stats_prune', 'websitez_manage_stats_prune_do');
+
+function websitez_manage_stats(){
+	if( !wp_next_scheduled( 'websitez_manage_stats_prune' ) ):
+  	wp_schedule_event( time(), 'daily', 'websitez_manage_stats_prune' );
+  endif;
+}
+
+function websitez_manage_stats_prune_do(){
+	global $wpdb;
+	$table_name = WEBSITEZ_STATS_TABLE;
+	//Delete stats more than 30 days old.
+	//Placing a limit of 50000 to prevent systems with a huge stats table from crashing.
+	$delete = $wpdb->query("DELETE FROM $table_name WHERE created_at < '".date("Y-m-d 00:00:00", strtotime("-1 month"))."' LIMIT 50000");
+}
+
+function websitez_dashboard_setup(){
+	$websitez_show_dashboard_widget = get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME);
+	if($websitez_show_dashboard_widget == "true"):
+		wp_add_dashboard_widget('websitez_dashboard_widget', 'WP Mobile Detector Updates', 'websitez_dashboard_widget_function');
+		global $wp_meta_boxes;
+		
+		// Get the regular dashboard widgets array 
+		// (which has our new widget already but at the end)
+	
+		$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		
+		// Backup and delete our new dashbaord widget from the end of the array
+	
+		$example_widget_backup = array('websitez_dashboard_widget' => $normal_dashboard['websitez_dashboard_widget']);
+		unset($normal_dashboard['websitez_dashboard_widget']);
+	
+		// Merge the two arrays together so our widget is at the beginning
+	
+		$sorted_dashboard = array_merge($example_widget_backup, $normal_dashboard);
+	
+		// Save the sorted array back into the original metaboxes 
+	
+		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+	endif;
+}
+
+function websitez_dashboard_widget_function(){
+	$data = websitez_remote_request("http://websitez.com/api/websitez-wp-mobile-detector/dashboard-feed.php","");
+	echo $data;
+}
+
+function websitez_get_mobile_device(){
+	global $websitez_mobile_device;
+	return $websitez_mobile_device;
+}
+function websitez_set_mobile_device($mobile_device){
+	global $websitez_mobile_device;
+	$websitez_mobile_device = $mobile_device;
+}
+/*
+Validate the mobile theme
+*/
+function validate_current_mobile_theme($template_name = null, $template_path = null) {
+	// Don't validate during an install/upgrade.
+	if ( defined('WP_INSTALLING') || !apply_filters( 'validate_current_theme', true ) )
+		return true;
+
+	if ( $template_name != WP_DEFAULT_THEME && !file_exists($template_path . '/index.php') ) {
+		switch_theme( WEBSITEZ_INSTALL_ADVANCED_THEME, WEBSITEZ_INSTALL_ADVANCED_THEME );
+		return false;
+	}
+
+	if ( $template_name != WP_DEFAULT_THEME && !file_exists($template_path . '/style.css') ) {
+		switch_theme( WEBSITEZ_INSTALL_ADVANCED_THEME, WEBSITEZ_INSTALL_ADVANCED_THEME );
+		return false;
+	}
+
+	return true;
+}
+
 /*
 Insert proper meta tags for caching and attribution
 */
@@ -78,12 +164,24 @@ function websitez_install(){
 		
 		if(!get_option(WEBSITEZ_ADVANCED_URL_REDIRECT))
 			add_option(WEBSITEZ_ADVANCED_URL_REDIRECT, '', '', 'yes');*/
-			
+		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME, WEBSITEZ_SHOW_MOBILE_ADS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME))
+			add_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME, WEBSITEZ_SHOW_MOBILE_TO_TABLETS, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME))
+			add_option(WEBSITEZ_SHOW_DASHBOARD_WIDGET_NAME, WEBSITEZ_SHOW_DASHBOARD_WIDGET, '', 'yes');
+		
 		if(!get_option(WEBSITEZ_RECORD_STATS_NAME))
 			add_option(WEBSITEZ_RECORD_STATS_NAME, WEBSITEZ_RECORD_STATS, '', 'yes');
 		
 		if(!get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME))
 			add_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, WEBSITEZ_USE_PREINSTALLED_THEMES, '', 'yes');
+		
+		if(!get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME))
+			add_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME, WEBSITEZ_SHOW_ATTRIBUTION, '', 'yes');
 			
 		if(!get_option(WEBSITEZ_BASIC_THEME)){
 			if(WEBSITEZ_USE_PREINSTALLED_THEMES == "true")
@@ -149,31 +247,55 @@ function websitez_advanced_buffer(){
 Filter content for an advanced mobile device
 */
 function websitez_filter_advanced_page($html){
-	//Resize the images on the page
-	$dom = new DOMDocument();
-	$dom->loadHTML($html);
-	
-	// grab all the on the page and make sure they are the right size
-	$xpath = new DOMXPath($dom);
-	$imgs = $xpath->evaluate("/html/body//img");
-	
-	for ($i = 0; $i < $imgs->length; $i++) {
-		$img = $imgs->item($i);
-		$src = trim($img->getAttribute('src'));
-		$img->removeAttribute('width');
-		$img->removeAttribute('height');
-		//Use dynamic image resizer link
-		if(strlen($src) > 0){
-			$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
-			list($width, $height) = getimagesize($src);
-			if($width > $max_width){
-				$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".$src."&w=".$max_width;
-				$img->setAttribute('src', $resize);
+	if (class_exists('DOMDocument')) {
+		try{
+			//Resize the images on the page
+			$dom = new DOMDocument();
+			$dom->loadHTML($html);
+			
+			// grab all the on the page and make sure they are the right size
+			$xpath = new DOMXPath($dom);
+			$imgs = $xpath->evaluate("/html/body//img");
+			
+			for ($i = 0; $i < $imgs->length; $i++) {
+				$img = $imgs->item($i);
+				$src = trim($img->getAttribute('src'));
+				$img->removeAttribute('width');
+				$img->removeAttribute('height');
+				//Use dynamic image resizer link
+				if(strlen($src) > 0){
+					$max_width = WEBSITEZ_ADVANCED_MAX_IMAGE_WIDTH;
+					list($width, $height) = getimagesize($src);
+					$blog_url = get_bloginfo('siteurl');
+					if($width > $max_width){
+						if(stripos($src,$blog_url) !== false):
+							$arr = explode("/",$src);
+							if(count($arr) > 4):
+								unset($arr[0]);
+								unset($arr[1]);
+								unset($arr[2]);
+								$src = "/".implode("/",$arr);
+							endif;
+						endif;
+						$tmp = parse_url($src);
+						if(strlen($tmp['host']) > 0):
+							$path = $tmp['scheme']."://".$tmp['host'].$tmp['path'];
+						else:
+							$path = $tmp['path'];
+						endif;
+						$resize = plugin_dir_url(__FILE__)."/timthumb.php?src=".urlencode($path)."&w=".$max_width;
+						$img->setAttribute('src', $resize);
+					}
+				}
 			}
+			
+			$stuff = $dom->saveHTML();
+		}catch(Exception $e){
+			$stuff = $html;
 		}
+	}else{
+		$stuff = $html;
 	}
-	
-	$stuff = $dom->saveHTML();
 	
 	return $stuff;
 }
@@ -183,62 +305,66 @@ Filter content for a basic mobile device
 */
 function websitez_filter_basic_page($html){
 	global $websitez_preinstalled_templates;
-
-	//Resize the images on the page
-	$dom = new DOMDocument();
-	$dom->loadHTML($html);
 	
-	// grab all the on the page and make sure they are the right size
-	$xpath = new DOMXPath($dom);
-	$divs = $xpath->evaluate("/html/body//div");
+	if (class_exists('DOMDocument')) {
+		//Resize the images on the page
+		$dom = new DOMDocument();
+		$dom->loadHTML($html);
 	
-	for ($i = 0; $i < $divs->length; $i++) {
-		$div = $divs->item($i);
-		$div->removeAttribute('data-role');
-		$div->removeAttribute('data-theme');
-		$div->removeAttribute('style');
-		$div->removeAttribute('data-icon');
-		$div->removeAttribute('data-iconpos');
-		$div->removeAttribute('onclick');
-		$div->removeAttribute('data-state');
+		// grab all the on the page and make sure they are the right size
+		$xpath = new DOMXPath($dom);
+		$divs = $xpath->evaluate("/html/body//div");
+	
+		for ($i = 0; $i < $divs->length; $i++) {
+			$div = $divs->item($i);
+			$div->removeAttribute('data-role');
+			$div->removeAttribute('data-theme');
+			$div->removeAttribute('style');
+			$div->removeAttribute('data-icon');
+			$div->removeAttribute('data-iconpos');
+			$div->removeAttribute('onclick');
+			$div->removeAttribute('data-state');
+		}
+	
+		$links = $xpath->evaluate("/html/body//a");
+	
+		for ($i = 0; $i < $links->length; $i++) {
+			$link = $links->item($i);
+			$link->removeAttribute('data-inline');
+			$link->removeAttribute('data-role');
+			$link->removeAttribute('data-theme');
+			$link->removeAttribute('style');
+			$link->removeAttribute('data-icon');
+			$link->removeAttribute('data-iconpos');
+			$link->removeAttribute('onclick');
+		}
+	
+		$uls = $xpath->evaluate("/html/body//ul");
+	
+		for ($i = 0; $i < $uls->length; $i++) {
+			$ul = $uls->item($i);
+			$ul->removeAttribute('data-inline');
+			$ul->removeAttribute('data-role');
+			$ul->removeAttribute('data-theme');
+			$ul->removeAttribute('data-inset');
+			$ul->removeAttribute('style');
+			$ul->removeAttribute('data-icon');
+			$ul->removeAttribute('data-iconpos');
+			$ul->removeAttribute('onclick');
+		}
+	
+		$htmls = $xpath->evaluate("/html");
+	
+		for ($i = 0; $i < $htmls->length; $i++) {
+			$h = $htmls->item($i);
+			$h->removeAttribute('dir');
+			$h->removeAttribute('lang');
+		}
+	
+		$text = $dom->saveHTML();
+	}else{
+		$text = $html;
 	}
-	
-	$links = $xpath->evaluate("/html/body//a");
-	
-	for ($i = 0; $i < $links->length; $i++) {
-		$link = $links->item($i);
-		$link->removeAttribute('data-inline');
-		$link->removeAttribute('data-role');
-		$link->removeAttribute('data-theme');
-		$link->removeAttribute('style');
-		$link->removeAttribute('data-icon');
-		$link->removeAttribute('data-iconpos');
-		$link->removeAttribute('onclick');
-	}
-	
-	$uls = $xpath->evaluate("/html/body//ul");
-	
-	for ($i = 0; $i < $uls->length; $i++) {
-		$ul = $uls->item($i);
-		$ul->removeAttribute('data-inline');
-		$ul->removeAttribute('data-role');
-		$ul->removeAttribute('data-theme');
-		$ul->removeAttribute('data-inset');
-		$ul->removeAttribute('style');
-		$ul->removeAttribute('data-icon');
-		$ul->removeAttribute('data-iconpos');
-		$ul->removeAttribute('onclick');
-	}
-	
-	$htmls = $xpath->evaluate("/html");
-	
-	for ($i = 0; $i < $htmls->length; $i++) {
-		$h = $htmls->item($i);
-		$h->removeAttribute('dir');
-		$h->removeAttribute('lang');
-	}
-	
-	$text = $dom->saveHTML();
 	
 	$text = preg_replace(
 	  array(
@@ -255,6 +381,8 @@ function websitez_filter_basic_page($html){
 			'@<iframe[^>]*?.*?</iframe>@siu',
 	    '@<noscript[^>]*?.*?</noscript>@siu',
 	    '@<noembed[^>]*?.*?</noembed>@siu',
+			// Remove visible content
+			'@<img[^>]*?>@siu',
 	  	// Add line breaks before and after blocks
 	    '@</?((address)|(blockquote)|(center)|(del))@iu',
 	    '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
@@ -265,7 +393,7 @@ function websitez_filter_basic_page($html){
 	    '@</?((frameset)|(frame)|(iframe))@iu',
 	  ),
 	  array(
-	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+	    ' ',' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
 	    "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
 	    "\n\$0", "\n\$0",
 	  ),
@@ -286,6 +414,9 @@ When in the admin area, this will alert the admin if the plugin is not installed
 */
 function websitez_checkInstalled(){
 	global $wpdb,$table_prefix,$websitez_free_version;
+	if(isset($_GET['websitez-plugin-notice'])):
+		update_option('WEBSITEZ_OTHER_PLUGINS_CHECK', 'false');
+	endif;
 	$table = $table_prefix."options";
 	if(!get_option(WEBSITEZ_BASIC_THEME) || !get_option(WEBSITEZ_ADVANCED_THEME)){
 		if($websitez_free_version == true){
@@ -294,6 +425,91 @@ function websitez_checkInstalled(){
 			add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>".WEBSITEZ_PLUGIN_NAME." was unable to install correctly. This domain is not authorized to use this plugin.</p><p><strong>Please contact support@websitez.com</strong></p></div>';" ) );
 		}
 	}
+	$plugin_notice = false;
+	$plugins = get_option('active_plugins');
+	foreach($plugins as $plugin):
+		if(stripos($plugin,"w3-total-cache") !== false):
+			$plugin_notice = true;
+		endif;
+	endforeach;
+	if(get_option('WEBSITEZ_OTHER_PLUGINS_CHECK') == 'false'):
+		$plugin_notice = false;
+	endif;
+	if($plugin_notice):
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>There are plugins installed that require slight modifications to work with the <strong>".WEBSITEZ_PLUGIN_NAME."</strong> plugin. Please read this short blog post that will help you resolve these issues quickly: <a href=\"http://websitez.com/resolving-plugin-conflicts-with-wp-mobile-detector/\" target=\"_blank\">http://websitez.com/resolving-plugin-conflicts-with-wp-mobile-detector/</a></p><p><a href=\"?websitez-plugin-notice=hide\">Hide This Notice</a></p></div>';" ) );
+	endif;
+	$cache = WEBSITEZ_PLUGIN_DIR.'/cache/';
+	$permissions = substr(sprintf('%o', fileperms($cache)), -4);
+	if($permissions != "0777"):
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>Please set the permissions on this folder (".$cache.") to be 777 to allow the <strong>WP Mobile Detector</strong> to work properly.</p><p>Execute the following command via SSH:<br><strong>chmod 777 ".$cache."</strong></p></div>';" ) );
+	endif;
+}
+
+function websitez_check_monetization(){
+	global $wpdb,$table_prefix,$websitez_free_version;
+	$table = $table_prefix."options";
+	if($_GET['page'] == "websitez_config" || $_GET['page'] == "websitez_stats" || $_GET['page'] == "websitez_themes" || $_GET['page'] == "websitez_monetization"):
+		$monetization = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($monetization == "false"):
+			$time = strtotime("+3 months", strtotime(get_option(WEBSITEZ_MONETIZATION_MESSAGE)));
+			$date = date("Y-m-d H:i:s", $time);
+			$current = date("Y-m-d H:i:s");
+			if($current >= $date):
+				add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p><strong><a href=\"admin.php?page=websitez_monetization\">".WEBSITEZ_PLUGIN_NAME." Monetization is disabled!</a></strong> You can <a href=\"admin.php?page=websitez_monetization&monetization=true\">enable monetization</a> or <a href=\"admin.php?page=websitez_monetization&hide=true\">hide</a> this message.</p></div>';" ) );
+			endif;
+		endif;
+	endif;
+}
+
+/*
+Check to make sure authorization token is set.
+*/
+function websitez_authorization(){
+	$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+	if(!$token):
+		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')."&source=wp-mobile-detector"));
+		if($response && $response['status'] == "1" && strlen($response['token']) > 0):
+			update_option(WEBSITEZ_PLUGIN_AUTHORIZATION,$response['token']);
+		endif;
+	endif;
+}
+
+function websitez_set_mobile_ads_buffer_append($html){
+	if(class_exists('DOMDocument')):
+		try{
+			$domain_token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+			$dom = new DOMDocument();
+			$xpath = new DOMXPath($dom);
+			$dom->loadHTML($html);
+			$body = $dom->getElementsByTagName('body')->item(0);
+
+	  	/* ad */
+	  	//http_build_query($_SERVER)
+	  	$ad_html = websitez_remote_request("http://adserver.websitez.com/php/ad.php?token=".$domain_token,http_build_query($_SERVER));
+	  	if(strlen($ad_html) > 11):
+				$div_a = $dom->createCDATASection($ad_html);
+	  		$body->appendChild($div_a);
+	  	endif;
+	  	
+			$html = $dom->saveHTML();  
+		}catch (Exception $e){  
+			//Do nothing for now.  
+		}
+	endif;
+	
+	return $html;
+}
+
+/*
+Ad mobile ads to the top and bottom of the page
+*/
+function websitez_set_mobile_ads_buffer(){
+	//Don't filter Dashboard pages and the feed
+	if (is_feed() || is_admin()){
+		return;
+	}
+
+	ob_start("websitez_set_mobile_ads_buffer_append");
 }
 
 /*
@@ -330,14 +546,24 @@ Lets get this party started
 function websitez_check_and_act_mobile(){
 	global $table_prefix, $wpdb, $websitez_free_version, $websitez_preinstalled_templates;
 	$mobile_device = websitez_detect_mobile_device();
+	//Set the detection
+	websitez_set_mobile_device($mobile_device);
+	
 	//Is it a mobile device?
-	if($mobile_device['status'] == true || $mobile_device['status'] == "1"){
+	if($mobile_device['status'] == "true"){
+		//Remove old stat records
+		add_action('init', 'websitez_manage_stats', 10, 0);
+		
 		//Record a mobile visit only on the regular site and if it is enabled
 		$websitez_record_stats = get_option(WEBSITEZ_RECORD_STATS_NAME);
 		$websitez_preinstalled_templates = get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME);
 		if($websitez_record_stats == "true" && !is_feed() && !is_admin()){
 			$insert = $wpdb->insert(WEBSITEZ_STATS_TABLE, array( 'data' => serialize($_SERVER), 'device_type' => $mobile_device['type'], 'created_at' => date("Y-m-d H:i:s") ) );
 		}
+		$websitez_show_mobile_ads = get_option(WEBSITEZ_SHOW_MOBILE_ADS_NAME);
+		if($websitez_show_mobile_ads != "false"):
+			add_action('wp', 'websitez_set_mobile_ads_buffer', 10, 0);
+		endif;
 
 		if($mobile_device['type'] == "2"){ //Standard device
 			$option = get_option(WEBSITEZ_BASIC_THEME);
@@ -372,9 +598,8 @@ function websitez_check_and_act_mobile(){
 		}
 	}else{
 		//If it is the free version, add attribution
-		if($websitez_free_version == true){
-			//Removing this link for now
-			//add_action('wp_footer', 'websitez_web_footer_standard');
+		if(get_option(WEBSITEZ_SHOW_ATTRIBUTION_NAME) == "true"){
+			add_action('wp_footer', 'websitez_web_footer_standard');
 		}
 		//This means it is not a mobile device
 	}
@@ -393,9 +618,7 @@ function websitez_filterContentAdvanced($content){
 }
 
 function websitez_web_footer_standard(){
-	echo "<div style='font-size: 1em; text-align: center; padding: 4px 0px;'>\n
-	<p><a href='http://websitez.com' target='_blank' title='WordPress Mobile' rel='external'>WordPress Mobile</a></p>\n
-	</div>\n";
+	echo "<div class='websitez-footer' style='font-size: 1em; text-align: center; padding: 4px 0px;'>\n<p>".websitez_kpr()."</p>\n</div>\n";
 }
 
 /*
@@ -405,7 +628,7 @@ function websitez_web_footer(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
 		echo "<div class='websitez-footer'>\n
-	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
+	<p>".websitez_kpr()."&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setFullSite()' rel='nofollow'>View Full Site</a></p>\n
 	</div>\n";
 	}else{
 		echo "<div class='websitez-footer'>\n
@@ -421,7 +644,7 @@ function websitez_web_footer_mobile(){
 	global $websitez_free_version;
 	if($websitez_free_version == true){
 		echo "<div class='websitez-footer-mobile'>\n
-	<p><a href='http://websitez.com' title='WordPress Mobile'>WordPress Mobile</a>&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
+	<p>".websitez_kpr()."&nbsp;&nbsp;&nbsp;<a href='' onClick='websitez_setMobileSite()' rel='nofollow'>View Mobile Site</a></p>\n
 	</div>\n";
 	}else{
 		echo "<div class='websitez-footer-mobile'>\n
@@ -451,9 +674,10 @@ function websitez_web_head(){
 Attribution and ability to switch between mobile and full site
 */
 function websitez_web_head_mobile(){
+	$cookie_name = WEBSITEZ_COOKIE_NAME;
 	echo "<script type='text/javascript'>\n
 	function websitez_setMobileSite(){\n
-		websitez_setCookie('websitez_mobile_detector','',-1);
+		websitez_setCookie('$cookie_name','',-1);
 		websitez_setCookie('websitez_mobile_detector_fullsite','',-1);
 		window.location.reload();\n
 	}\n
@@ -484,11 +708,27 @@ function websitez_detect_mobile_device(){
   $accept = $_SERVER['HTTP_ACCEPT'];
 	//Type of phone
 	$mobile_browser_type = "0"; //0 - PC, 1 - Smart Phone, 2- Standard Phone
+	
+	$show_mobile_to_tablets = get_option(WEBSITEZ_SHOW_MOBILE_TO_TABLETS_NAME);
 
 	switch(true){
+		case (preg_match('/ipad/i',$user_agent)||preg_match('/kindle/i',$user_agent)||preg_match('/nook/i',$user_agent)); //Tablets
+			if($show_mobile_to_tablets == 'true'):
+				$mobile_browser = true;
+				$mobile_browser_type = "1"; //Smart Phone
+			else:
+				$mobile_browser = false;
+				$mobile_browser_type = "0"; //Smart Phone
+			endif;
+    break;
 		/*
 		Start off with smart phones or smart devices
 		*/
+		case (preg_match('/ipad/i',$user_agent)); //Tablets
+      $mobile_browser = true;
+			$mobile_browser_type = "1"; //Smart Phone
+    break;
+		
 		case (preg_match('/ipod/i',$user_agent)||preg_match('/iphone/i',$user_agent)); //iPhone or iPod
       $mobile_browser = true;
 			$mobile_browser_type = "1"; //Smart Phone
@@ -558,31 +798,42 @@ function websitez_detect_mobile_device(){
 		break;
 	}
 	
-	//Set a persistent client-side value to avoid having to detect again for this visitor
-	websitez_set_previous_detection($mobile_browser,$mobile_browser_type);
+	$mobile_browser_status = ($mobile_browser == true) ? "true" : "false";
 	
-	return array('status'=>$mobile_browser,'type'=>$mobile_browser_type);
+	//Set a persistent client-side value to avoid having to detect again for this visitor
+	websitez_set_previous_detection($mobile_browser_status,$mobile_browser_type,$user_agent);
+	
+	return array('status'=>$mobile_browser_status,'type'=>$mobile_browser_type);
 }
 
 /*
 If it is a mobile device, lets try and remember to avoid having to detect it again
 */
-function websitez_set_previous_detection($status,$type){
-	setcookie("websitez_mobile_detector", $status."|".$type, time()+3600, "/");
+function websitez_set_previous_detection($status,$type,$user_agent){
+	if($status=="true"){
+		//This is set to prevent caching mechanisms such as W3 total cache from caching the mobile page
+		setcookie("websitez_is_mobile", "true", time()+3600, "/");
+	}
+	
+	$s = setcookie(WEBSITEZ_COOKIE_NAME, $status."|".$type."|".md5($user_agent), time()+3600, "/");
 }
 
 /*
 Check to see if this mobile device has been previously detected
 */
 function websitez_check_previous_detection(){
-	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
+	if(isset($_COOKIE['websitez_mobile_detector_fullsite']) && isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
 		//Returning a 0 will show the desktop version aka the 'fullsite'
 		//This is executed if the user elected to view the 'fullsite' version
 		return array('status'=>$obj[0],'type'=>'0');
-	}else if(isset($_COOKIE['websitez_mobile_detector'])){
-		$obj = explode("|",$_COOKIE['websitez_mobile_detector']);
-		return array('status'=>$obj[0],'type'=>$obj[1]);
+	}else if(isset($_COOKIE[WEBSITEZ_COOKIE_NAME])){
+		$obj = explode("|",$_COOKIE[WEBSITEZ_COOKIE_NAME]);
+		if($obj[2] == md5($_SERVER['HTTP_USER_AGENT'])):
+			return array('status'=>$obj[0],'type'=>$obj[1]);
+		endif;
+		
+		return false;
 	}else{
 		return false;
 	}
@@ -612,7 +863,7 @@ function websitez_get_mobile_types(){
 	return array(array('name'=>'Basic Mobile Device','option'=>WEBSITEZ_BASIC_THEME,'url_redirect'=>WEBSITEZ_BASIC_URL_REDIRECT),array('name'=>'Advanced Mobile Device','option'=>WEBSITEZ_ADVANCED_THEME,'url_redirect'=>WEBSITEZ_ADVANCED_URL_REDIRECT));
 }
 
-function websitez_get_themes($path) {
+function websitez_get_themes($path = null, $only_mobile = false) {
 	global $wp_themes, $wp_broken_themes, $wp_theme_directories;
 
 	/*
@@ -623,9 +874,12 @@ function websitez_get_themes($path) {
 	//register_theme_directory( $path );
 	
 	//Empty out the directory array and add the plugin dir
-	$wp_theme_directories = array($path);
+	if($only_mobile == true){
+		$current_theme_directories = $wp_theme_directories;
+		$wp_theme_directories = array($path);
+	}
 
-	if ( !$theme_files = search_theme_directories() )
+	if (!function_exists('search_theme_directories') || !$theme_files = search_theme_directories(true))
 		return false;
 
 	asort( $theme_files );
@@ -795,7 +1049,7 @@ function websitez_get_themes($path) {
 	unset($theme_files);
 
 	/* Store theme roots in the DB */
-	if ( get_site_transient( 'theme_roots' ) != $theme_roots )
+	if ( function_exists('get_site_transient') && get_site_transient( 'theme_roots' ) != $theme_roots )
 		set_site_transient( 'theme_roots', $theme_roots, 7200 ); // cache for two hours
 	unset($theme_roots);
 
@@ -812,7 +1066,132 @@ function websitez_get_themes($path) {
 			}
 		}
 	}
-
+	
+	//Empty out the directory array and add the plugin dir
+	if($only_mobile == true){
+		$wp_theme_directories = $current_theme_directories;
+	}
+	
 	return $wp_themes;
+}
+
+/*
+Will return a link to place depending on first char of the page filename
+*/
+function websitez_kpr(){
+	// phrase 3 should be your primary keyphrase, as it will come up with index.html
+	
+	$kpr_phrase = array(
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //0
+		'<a href="http://websitez.com" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //1
+		'<a href="http://websitez.com/wordpress-mobile/" title="WordPress Mobile Plugin">WordPress Mobile Plugin</a>', //2
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //3
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //4
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //5
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile Plugins</a>', //6
+		'<a href="http://websitez.com/products-page/mobile-themes/" title="WordPress Mobile Themes">WordPress Mobile Themes</a>', //7
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //8
+		'<a href="http://websitez.com" title="WordPress Mobile Plugins">WordPress Mobile Plugins</a>', //9
+		'<a href="http://websitez.com" title="WordPress Mobile">WordPress Mobile</a>', //10
+	);
+	##############################
+	# DO NOT EDIT BELOW THIS LINE
+	##############################
+
+	// unset variables to get a clean start
+	unset($kpr_explode);
+	unset($internal_page_filename);
+	unset($kpr_char);
+	unset($kpr_num);
+
+	// get the page's filename
+	$kpr_explode = explode('/', $_SERVER["REQUEST_URI"]);
+	if(count($kpr_explode) >=2){
+		if($kpr_explode[count($kpr_explode)-1] != ""){
+			$internal_page_filename = strtolower($kpr_explode[count($kpr_explode)-1]);
+		}else if($kpr_explode[count($kpr_explode)-2] != ""){
+			$internal_page_filename = strtolower($kpr_explode[count($kpr_explode)-2]);
+		}else{
+			$internal_page_filename = "index";
+		}
+	}else{
+		$internal_page_filename = "index";
+	}
+
+	// get the first letter of the page's filename and convert it to ascii
+	$kpr_char = substr($internal_page_filename, 0, 1);
+	$kpr_num = ord($kpr_char);
+
+	// display the appropriate phrase
+	if ($kpr_num <= 96) // caps, numbers, some punctuation, and most non printable chars
+	{
+		return $kpr_phrase[0];
+	}
+	else if ( ($kpr_num >= 97) && ($kpr_num <= 99) ) // a - c
+	{
+		return $kpr_phrase[1];
+	}
+	else if ( ($kpr_num >= 100) && ($kpr_num <= 102) ) // d - f
+	{
+		return $kpr_phrase[2];
+	}
+	else if ( ($kpr_num >= 103) && ($kpr_num <= 105) ) // g - i
+	{
+		return $kpr_phrase[3];
+	}
+	else if ( ($kpr_num >= 106) && ($kpr_num <= 108) ) // j - l
+	{
+		return $kpr_phrase[4];
+	}
+	else if ( ($kpr_num >= 109) && ($kpr_num <= 111) ) // m - o
+	{
+		return $kpr_phrase[5];
+	}
+	else if ( ($kpr_num >= 112) && ($kpr_num <= 114) ) // p - r
+	{
+		return $kpr_phrase[6];
+	}
+	else if ( ($kpr_num >= 115) && ($kpr_num <= 117) ) // s - u
+	{
+		return $kpr_phrase[7];
+	}
+	else if ( ($kpr_num >= 118) && ($kpr_num <= 120) ) // v - x
+	{
+		return $kpr_phrase[8];
+	}
+	else if ($kpr_num >= 121) // y +
+	{
+		return $kpr_phrase[9];
+	}
+	else // catchall for anything that slipped through the cracks
+	{
+		return $kpr_phrase[10];
+	}
+}
+
+/*
+Check for CURL
+*/
+function websitez_iscurlinstalled() {
+	if(function_exists('get_loaded_extensions') && in_array ('curl', get_loaded_extensions())) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/*
+Perform CURL
+*/
+function websitez_remote_request($host,$path){
+	$fp = curl_init($host);
+	curl_setopt($fp, CURLOPT_POST, true);
+	curl_setopt($fp, CURLOPT_POSTFIELDS, $path);
+	curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($fp, CURLOPT_CONNECTTIMEOUT, 5);
+	$page = curl_exec($fp);
+	curl_close($fp);
+	
+	return $page;
 }
 ?>
