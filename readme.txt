@@ -3,7 +3,7 @@ Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, b
 Contributors: Websitez.com
 Minimum version: 2.7
 Requires at least: 2.7
-Tested up to: 4.0
+Tested up to: 4.2
 Stable tag: 1.8
 
 The WP Mobile Detector mobile plugin automatically detects over 5,000 mobile devices and displays a compatible mobile theme.
