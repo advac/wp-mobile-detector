@@ -3,8 +3,6 @@ if(WEBSITEZ_MODE == "production"){
 	error_reporting(0);
 }
 
-add_action('wp_ajax_websitez_options', 'websitez_save_options');
-
 function websitez_save_options() {
 	global $wpdb; // this is how you get access to the database
 	$websitez_options = array();
