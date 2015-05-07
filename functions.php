@@ -3,12 +3,6 @@ if(WEBSITEZ_MODE == "production"){
 	error_reporting(0);
 }
 
-add_filter('bloginfo', 'websitez_mobile_title', 10, 2);
-add_filter( 'cron_schedules', 'wz_cron_add_monthly' );
-add_filter('plugin_action_links', 'websitez_settings_link', 10, 2 );
-add_action("activated_plugin", "websitez_plugin_activated");
-add_filter('pre_get_posts', 'websitez_post_results');
-
 function websitez_check_for_update(){
 	$websitez_options = websitez_get_options();
 	$data = array(
@@ -992,6 +986,8 @@ function websitez_check_and_act_mobile(){
 		endif;
 
 		if($mobile_device['type'] == "2"){ //Standard device
+			add_filter('bloginfo', 'websitez_mobile_title', 10, 2);
+			add_filter('pre_get_posts', 'websitez_post_results');
 			if(strlen($websitez_options['general']['remove_shortcodes']) > 0){
 				websitez_nullify_shortcodes($websitez_options['general']['remove_shortcodes']);
 			}
@@ -1018,6 +1014,8 @@ function websitez_check_and_act_mobile(){
 				return true;
 			}
 		}else if($mobile_device['type'] == "1"){ //Smart device
+			add_filter('bloginfo', 'websitez_mobile_title', 10, 2);
+			add_filter('pre_get_posts', 'websitez_post_results');
 			if(strlen($websitez_options['general']['disable_plugins']) > 0){
 				$disabled = explode(",", $websitez_options['general']['disable_plugins']);
 				foreach($disabled as $disable){
