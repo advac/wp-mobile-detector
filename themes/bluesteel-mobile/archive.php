@@ -23,7 +23,7 @@
 		    		</div>
 		    	</div>
 					<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" class="post-title"><?php the_title(); ?></a>
-					<p class="post-author"><?php _e('Author:');?> <strong><?php the_author(); ?></strong></p>
+					<p class="post-author">Author: <strong><?php the_author(); ?></strong></p>
 					<div class="post-entry<?php if($i!=0) echo " hidden";?> eid<?php echo $i;?>"><?php the_excerpt(); ?></div>
 					<div style="clear: both;"></div>
 				</div>

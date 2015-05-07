@@ -1,14 +1,32 @@
 <?php
 error_reporting(0);
 
+add_action( 'wp_print_styles', 'websitez_stylesheet');
+if (!function_exists('websitez_stylesheet')){
+	function websitez_stylesheet() {
+		$myStyleUrl = get_bloginfo('template_url').'/style.php';
+		wp_register_style('websitez-custom-stylesheet', $myStyleUrl);
+		wp_enqueue_style( 'websitez-custom-stylesheet');
+	}
+}
+
 add_filter('show_admin_bar', '__return_false');
 
 function wz_boot_footer_scripts() {
-    echo '<script type="text/javascript" src="'.get_template_directory_uri().'/js/jmobile.min.js"></script><script type="text/javascript" src="'.get_template_directory_uri().'/js/wz_mobile.min.js"></script>';
+    wp_enqueue_script('jmobile', get_template_directory_uri().'/js/jmobile.min.js', array(), false, true);
+	wp_enqueue_script('wz_mobile', get_template_directory_uri().'/js/wz_mobile.min.js', array(), false, true);
 }
 add_action('wp_footer', 'wz_boot_footer_scripts');
 
 function wz_boot_is_home(){
+	if(function_exists('websitez_get_options')):
+		global $wp_query;
+		$websitez_options = websitez_get_options();
+		$page_id = (int)$websitez_options['general']['mobile_home_page'];
+		if($wp_query->queried_object->ID == $page_id):
+			return true;
+		endif;
+	endif;
 	if($_SERVER['REQUEST_URI'] == "/"):
 		return true;
 	endif;
