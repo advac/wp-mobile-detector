@@ -13,6 +13,10 @@
 	</head>
 	<body>
 		<?php
+		if($websitez_options['ads']['show_header'] == "yes")
+			echo stripslashes($websitez_options['ads']['show_header_snippet']);
+		?>
+		<?php
 		if(wz_boot_is_home() || is_archive()):
 			include(TEMPLATEPATH.'/partials/header-home.php');
 		else:
