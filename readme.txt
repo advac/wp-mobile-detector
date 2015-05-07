@@ -1,5 +1,5 @@
 === WP Mobile Detector ===
-Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, ipad, mobile website, BuddyPress
+Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, smartphone, mobile theme, ipad, mobile website, BuddyPress
 Contributors: websitezcom
 Minimum version: 2.7
 Requires at least: 2.7

@@ -661,6 +661,19 @@ function websitez_uninstall(){
 }
 
 /*
+Check to make sure authorization token is set.
+*/
+function websitez_authorization(){
+	$token = get_option(WEBSITEZ_PLUGIN_AUTHORIZATION);
+	if(!$token){
+		$response = unserialize(websitez_remote_request("http://stats.websitez.com/get_token.php","host=".$_SERVER['HTTP_HOST']."&email=".get_option('admin_email')."&source=wp-mobile-detector"));
+		if($response && $response['status'] == "1" && strlen($response['token']) > 0){
+			update_option(WEBSITEZ_PLUGIN_AUTHORIZATION,$response['token']);
+		}
+	}
+}
+
+/*
 Start the buffer to filter the raw contents of a page
 */
 function websitez_basic_buffer(){
@@ -909,6 +922,7 @@ function websitez_checkInstalled(){
 	if($permissions != "0777"):
 		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>To finish installing the <strong>WP Mobile Detector</strong>, we need your help. Please <a href=\"admin.php?page=websitez_themes&ftp=true\">click here</a>.</p></div>';" ) );
 	endif;
+	websitez_authorization();
 }
 
 /*
