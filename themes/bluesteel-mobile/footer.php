@@ -1,6 +1,11 @@
 	<div class="websitez-footer">
-		<p>Powered by <a href="http://wordpress.org" rel="external">WordPress</a></p>
+		<?php wp_footer(); ?>
 	</div>
-	<?php wp_footer(); ?>
+	<?php
+	$websitez_options = websitez_get_options();
+	if(strlen($websitez_options['ads']['show_footer_snippet']) > 0){
+		echo stripslashes($websitez_options['ads']['show_footer_snippet']);
+	}
+	?>
 </body>
 </html>
