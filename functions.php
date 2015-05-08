@@ -564,7 +564,7 @@ function websitez_install(){
 	}
 	
 	//Default options for the customizable mobile theme
-	$websitez_options = array(
+	$websitez_options_default = array(
 		'colors' => array(
 			"custom_color_light"=>"4f7498",
 			"custom_color_medium_light"=>"abbdce",
@@ -609,8 +609,15 @@ function websitez_install(){
 	);
 	
 	//Set the default options if they do not exist
-	if(!get_option("websitez-options"))
-		add_option("websitez-options", serialize($websitez_options), '', 'yes');
+	$websitez_options = websitez_get_options();
+	if(!$websitez_options){
+		websitez_set_options($websitez_options_default);
+	}else{
+		if(strlen($websitez_options['general']['password']) == 0){
+			$websitez_options['general']['password'] = websitez_gen_uuid();
+			websitez_set_options($websitez_options);
+		}
+	}
 	
 	if(!get_option(WEBSITEZ_LICENSE_KEY_NAME))
 		add_option(WEBSITEZ_LICENSE_KEY_NAME, WEBSITEZ_LICENSE_KEY, '', 'yes');
