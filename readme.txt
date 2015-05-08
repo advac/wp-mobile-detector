@@ -18,7 +18,7 @@ The included interactive theme editor makes configuring your mobile website a br
 
 Did we mention the eye-popping 11 themes hand-crafted for the mobile web? That's right, 11 mobile themes including some of the fastest and most efficient available today. Themes for all types of websites, blogs, corporate, ecommerce, and more!
 
-**Now Available: WP Mobile Detector PRO v3.0**
+**Now Available: WP Mobile Detector PRO v3**
 
 Build your own custom mobile theme with our brand new interactive mobile theme editor. Change colors, upload a logo, insert mobile ads, track visitors with mobile statistics, and much more! See all of your changes in real-time right from your own browser. See exactly what your mobile visitors see.
 
@@ -78,9 +78,14 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 
 == Changelog ==
 
+= 3.1 =
+
++ Changed GET to POST
++ Added debugging information on upgrade
+
 = 3.0 (May the fourth be with you, 2015) =
 
-Major update. Rewritten from the ground up. New Amanda Mobile theme utilizing the jMobile library.
++ Major update. Rewritten from the ground up. New Amanda Mobile theme utilizing the jMobile library.
 
 = 2.2 =
 

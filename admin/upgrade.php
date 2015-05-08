@@ -14,11 +14,12 @@ if(!websitez_is_paid()){
 		);
 		$args = array(
 			'timeout' => 15,
-			'user-agent' => 'WordPress-Admin-Upgrade-Page'
+			'user-agent' => 'WordPress-Admin-Upgrade-Page',
+			'body' => $data
 		);
-		$url = 'https://websitez.com/?'.http_build_query($data);
+		$url = 'https://websitez.com/';
 		$message = 'The license key provided is invalid.';
-		$response = wp_remote_get( $url, $args );
+		$response = wp_remote_post( $url, $args );
 		if(array_key_exists('body', $response) && strlen($response['body']) > 0){
 			$result = json_decode($response['body'], true);
 			if($result['activated'] === true){
@@ -26,7 +27,16 @@ if(!websitez_is_paid()){
 				update_option(WEBSITEZ_LICENSE_KEY_NAME, $data['licence_key']);
 				update_option(WEBSITEZ_LICENSE_EMAIL_NAME, $data['email']);
 				$message = 'You have successfully upgraded the plugin!';
+			}else{
+				$message .= " ".$response['body'];
 			}
+		}else{
+			if(is_object($response) && is_array($response->errors)){
+				$message .= " ".json_encode($response->errors);
+			}else{
+				$message .= " The request failed.";
+			}
+			$message .= " The license key is: ".$_POST['licence_key']." and email is ".$_POST['licence_email'].".";
 		}
 	}
 }
