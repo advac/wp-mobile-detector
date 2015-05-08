@@ -611,8 +611,6 @@ function websitez_install(){
 	//Set the default options if they do not exist
 	if(!get_option("websitez-options"))
 		add_option("websitez-options", serialize($websitez_options), '', 'yes');
-	else
-		update_option("websitez-options", serialize($websitez_options));
 	
 	if(!get_option(WEBSITEZ_LICENSE_KEY_NAME))
 		add_option(WEBSITEZ_LICENSE_KEY_NAME, WEBSITEZ_LICENSE_KEY, '', 'yes');
