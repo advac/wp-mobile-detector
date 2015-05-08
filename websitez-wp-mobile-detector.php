@@ -3,7 +3,7 @@
  Plugin Name: WP Mobile Detector
  Plugin URI: http://www.websitez.com/
  Description: Create a mobile friendly WordPress website instantly for over 5,000+ mobile devices.
- Version: 3.0
+ Version: 3.1
  Author: Websitez.com, LLC
  Author URI: http://www.websitez.com
  Text Domain: wp-mobile-detector
