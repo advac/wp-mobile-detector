@@ -578,7 +578,6 @@ function websitez_install(){
 			"selected_mobile_theme"=>"amanda-mobile",
 			"posts_per_page"=>"10",
 			"display_to_tablet"=>"no",
-			"password" => websitez_gen_uuid(),
 			"record_stats" => "true"
 		),
 		'analytics' => array(
@@ -612,11 +611,6 @@ function websitez_install(){
 	$websitez_options = websitez_get_options();
 	if(!$websitez_options){
 		websitez_set_options($websitez_options_default);
-	}else{
-		if(strlen($websitez_options['general']['password']) == 0){
-			$websitez_options['general']['password'] = websitez_gen_uuid();
-			websitez_set_options($websitez_options);
-		}
 	}
 	
 	if(!get_option(WEBSITEZ_LICENSE_KEY_NAME))

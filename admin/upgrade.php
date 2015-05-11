@@ -8,10 +8,10 @@ if(!websitez_is_paid()){
 			'email' => $_POST['licence_email'],
 			'licence_key' => $_POST['licence_key'],
 			'product_id' => 'WP Mobile Detector',
-			'instance' => $websitez_options['general']['password'],
 			'software_version' => WEBSITEZ_PLUGIN_VERSION,
 			'platform' => ''
 		);
+		$data['instance'] = websitez_gen_uuid();
 		$args = array(
 			'timeout' => 15,
 			'user-agent' => 'WordPress-Admin-Upgrade-Page',
@@ -22,13 +22,15 @@ if(!websitez_is_paid()){
 		$response = wp_remote_post( $url, $args );
 		if(array_key_exists('body', $response) && strlen($response['body']) > 0){
 			$result = json_decode($response['body'], true);
-			if($result['activated'] === true){
+			if($result['activated'] == true){
+				$websitez_options['general']['password'] = $data['instance'];
+				websitez_set_options($websitez_options);
 				wp_schedule_event( time(), 'monthly', 'websitez_do_filter' );
 				update_option(WEBSITEZ_LICENSE_KEY_NAME, $data['licence_key']);
 				update_option(WEBSITEZ_LICENSE_EMAIL_NAME, $data['email']);
 				$message = 'You have successfully upgraded the plugin!';
 			}else{
-				$message .= " ".$response['body'];
+				$message .= " ".$response['body']." | ".json_encode($data);
 			}
 		}else{
 			if(is_object($response) && is_array($response->errors)){
