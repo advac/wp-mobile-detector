@@ -4,7 +4,7 @@ Contributors: websitezcom
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 4.2.2
-Stable tag: 3.1.1
+Stable tag: 3.2
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -78,7 +78,7 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 
 == Changelog ==
 
-= 3.1.1 =
+= 3.2 =
 
 + Fixing image link issues.
 + Fixing activation logic.
@@ -243,7 +243,7 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 
 == Upgrade Notice ==
 
-= 3.1.1 =
+= 3.2 =
 
 This version fixes the theme editor not showing up on older versions of PHP.
 
