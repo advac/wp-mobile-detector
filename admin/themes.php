@@ -289,6 +289,10 @@ if(isset($_GET['bak'])){
 		}
 	}
 }
+if(isset($_GET['reset']) && $_GET['reset'] == "true"){
+	websitez_set_options(websitez_default_settings());
+	$message = 'The default settings have been applied. The page will now refresh.';
+}
 
 // Get themes
 if(function_exists('get_allowed_themes')){
@@ -816,7 +820,7 @@ Default settings
 							<?php
 							$menu_order = explode(",",$websitez_options['sidebar']['menu_order']);
 							foreach($menu_order as $menu){
-								if($menu == "show_menu"){ ?>
+								if($menu == "show_menu" || $menu == "show_menu_div"){ ?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
@@ -844,7 +848,7 @@ Default settings
 										</div>
 									</div>
 								</div>
-								<?php }elseif($menu == "show_pages"){ ?>
+								<?php }elseif($menu == "show_pages" || $menu == "show_pages_div"){ ?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
@@ -877,7 +881,7 @@ Default settings
 										</div>
 									</div>
 								</div>
-								<?php }elseif($menu == "show_categories"){ ?>
+								<?php }elseif($menu == "show_categories" || $menu == "show_categories_div"){ ?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
@@ -910,7 +914,7 @@ Default settings
 										</div>
 									</div>
 								</div>
-								<?php }elseif($menu == "show_search"){ ?>
+								<?php }elseif($menu == "show_search" || $menu == "show_search_div"){ ?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
@@ -923,7 +927,7 @@ Default settings
 										</div>
 									</div>
 								</div>
-								<?php }elseif($menu == "show_meta"){ ?>
+								<?php }elseif($menu == "show_meta" || $menu == "show_meta_div"){ ?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
@@ -1373,6 +1377,16 @@ Default settings
 						
 						</div>
 						
+						<h2><?php _e('Defaults','wp-mobile-detector'); ?></h2>
+						
+						<div class="block">
+							<label><?php _e('Reset the plugin with default settings.','wp-mobile-detector'); ?></label>
+							<div>
+								<p><?php _e('If you are having trouble with the plugin, sometimes it is helpful to reset to the default configuration for the plugin and then try your changes again.','wp-mobile-detector'); ?></p>
+								<p><a href="admin.php?page=websitez_themes&reset=true" class="button" onclick="return confirm('<?php _e('Are you sure?','wp-mobile-detector'); ?>');"><?php _e('Reset WP Mobile Detector to Default Settings','wp-mobile-detector'); ?></a></p>
+							</div>
+						</div>
+						
 					</div> <!-- end misc -->
 					
 					<center>
@@ -1761,6 +1775,9 @@ jQuery('#save').click(function(){
 	return __wza.save();
 });
 jQuery(document).ready(function () {
+	<?php if($_GET['reset'] == "true"){ ?>
+	window.location = "admin.php?page=websitez_themes";
+	<?php } ?>
 	var iframe = jQuery('#websitez-preview')[0];
 	jQuery(iframe).load(function () { //The function below executes once the iframe has finished loading
 		console.log('iframe load fired');
