@@ -1,12 +1,12 @@
-=== WP Mobile Detector Mobile Plugin ===
-Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, ipad, mobile website, BuddyPress
-Contributors: Websitez.com
+=== WP Mobile Detector ===
+Tags: mobile, pda, wireless, cellphone, phone, iphone, touch, webkit, android, blackberry, ipod, mobile phone, smartphone, mobile theme, ipad, mobile website, BuddyPress
+Contributors: websitezcom
 Minimum version: 2.7
 Requires at least: 2.7
-Tested up to: 4.0
-Stable tag: 1.8
+Tested up to: 4.2.2
+Stable tag: 3.2
 
-The WP Mobile Detector mobile plugin automatically detects over 5,000 mobile devices and displays a compatible mobile theme.
+WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
 == Description ==
 
@@ -14,27 +14,24 @@ The WP Mobile Detector WordPress plugin automatically detects if the visitor is 
 
 It is one of the first to differentiate between a standard mobile phone and a smart phone. With advanced mobile statistics, image resizing, automatically formatted content, and detection of 5,000+ mobile phones, the WP Mobile Detector gives your mobile visitors the experience they desire.
 
-The WP Mobile Detector plugin also includes an installer that will configure everything automatically. All you have to do is install and activate the plugin.
+The included interactive theme editor makes configuring your mobile website a breeze. See exactly what your mobile visitors will see right in your browser.
 
-Included in this plugin is the Jester Mobile, Anakin Mobile, Casper Mobile, Colbalt Mobile, Mojo Mobile, Viper Mobile, and Bluesteel Mobile advanced mobile themes, all featuring the jQuery framework. Impress your visitors with collapsible menus, dynamic page loading, cross-platform compatibility, touch-optimized layouts, widgets, and more.
+Did we mention the eye-popping 11 themes hand-crafted for the mobile web? That's right, 11 mobile themes including some of the fastest and most efficient available today. Themes for all types of websites, blogs, corporate, ecommerce, and more!
 
-This plugin is compatible with most other mobile detection plugins. Use the WP Mobile Detector to ensure that you're detecting as many mobile devices as possible.
-
-* Automatic detection of mobile devices.
-* Differentiates between standard mobile devices and advanced mobile devices.
-* Detects over 5,000+ mobile devices.
-* Advanced mobile statistics including unique visitors, visits, mobile search engine bots, and more!
-* Automatically formats content and resizes images.
-* Includes seven mobile themes pre-installed.
-* Select any of the seven pre-installed mobile themes or choose one of your own.
-
-**Now Available: WP Mobile Detector PRO v2.6**
+**Now Available: WP Mobile Detector PRO v3**
 
 Build your own custom mobile theme with our brand new interactive mobile theme editor. Change colors, upload a logo, insert mobile ads, track visitors with mobile statistics, and much more! See all of your changes in real-time right from your own browser. See exactly what your mobile visitors see.
 
-For more information please visit the [WP Mobile Detector PRO Product Page](http://websitez.com/?utm_campaign=wp-mobile-detector-front-readme&utm_medium=web&utm_source=wordpressdotorg "WP Mobile Detector PRO Product Page")
+For more information please visit the [WP Mobile Detector PRO](http://websitez.com/?utm_campaign=wp-mobile-detector-front-readme&utm_medium=web&utm_source=wordpressdotorg "WP Mobile Detector PRO"). For tips on improving your website, checkout [Website Suggestions](http://websitesuggestions.net/ "Website Suggestions").
 
 == Installation ==
+
+1. Login to your WordPress administration area, and go to the Plugins section.
+2. Click "Add New" at the top.
+3. In the search box type "WP Mobile Detector".
+4. Make sure the author is "Websitez.com" and then click "Install Now".
+
+OR
 
 1. Unzip and place the 'wp-mobile-detector' folder in your 'wp-content/plugins' directory
 2. Click the 'Activate' link for WP Mobile Detector on your Plugins page (in the WordPress administration page)
@@ -51,25 +48,65 @@ This is most likely due to folder permissions being incorrect.
 
 Please set permissions for the 'cache' folder located inside of the 'plugins/wp-mobile-detector' folder to 777.
 
-= Does this plugin work with the W3 Total Cache plugin? =
+= Does this plugin work with W3 Total Cache =
 
-Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mobile' in the 'Rejected Cookies' field.
+Yes!
+
+To allow the WP Mobile Detector plugin to work with W3 Total Cache, simply go to the W3 Total Cache "Page Cache Settings".
+
+There you will see a box labeled "Rejected Cookies". In this box place the following value "websitez_is_mobile".
+
+Save the changes and clear the cache. That is it!
+
+= My site shows a blank page for a mobile device. What do I do? =
+
+Check to make sure that your server is using PHP5. If it is not, please switch to PHP5.
+
+If it is using PHP5, first try selecting a different mobile theme. If this does not work, there was a problem with activation.
+
+Please try de-activating the plugin and re-activating it. If this does not work, please de-activate the plugin and contact support@websitez.com.
 
 == Screenshots ==
 
-1. WordPress Administration Settings
+1. Interactive Theme Editor
 2. Advanced Mobile Statistics
-3. Advanced Visitor Details
-4. Jester Mobile Theme
-5. Casper Mobile Theme
-6. Colbalt Mobile Theme
-7. Mojo Mobile Theme
-8. Viper Mobile Theme
-9. Anakin Mobile Theme
-10. Bluesteel Mobile Theme
-11. WZ Mobile Theme
+3. Amanda Mobile Theme
+4. Websitez Mobile Theme
+5. Jester Mobile Theme
+6. Corporate Mobile Theme
+7. Anakin Mobile Theme
 
 == Changelog ==
+
+= 3.2 =
+
++ Fixing image link issues.
++ Fixing activation logic.
++ Adding some debugging.
++ Fixed the references to DIR for older versions of PHP.
+
+= 3.1 =
+
++ Changed GET to POST
++ Added debugging information on upgrade
+
+= 3.0 (May the fourth be with you, 2015) =
+
++ Major update. Rewritten from the ground up. New Amanda Mobile theme utilizing the jMobile library.
+
+= 2.2 =
+
++ Fixed a security risk in the timthumb.php script addressing invalid domains being authorized based on similar domains.
+
+= 2.1 =
+
++ Added Corporate Mobile Theme
++ Added social media support for Websitez Mobile & Corporate Mobile
+
+= 2.0 =
+
++ Added user agent hash check
++ New theme builder
 
 = 1.8 =
 + Added checks to installation to make sure plugin is configured properly
@@ -203,3 +240,13 @@ Yes, on the 'Page Cache Settings' inside of W3 Total Cache place 'websitez_is_mo
 = 1.0 =
 
 + Release of plugin.
+
+== Upgrade Notice ==
+
+= 3.2 =
+
+This version fixes the theme editor not showing up on older versions of PHP.
+
+= 3.0 =
+
+Rebuilt from the ground up. You do not want to miss this update!

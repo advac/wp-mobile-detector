@@ -8,6 +8,9 @@
 			<a href="http://www.facebook.com/sharer.php?u=<?php echo wz_get_current_encoded_url(); ?>&t=<?php wp_title(); ?>" target="_blank"><li>
 				Facebook
 			</li></a>
+			<a href="mailto:?subject=Hey, check this out!&body=<?php echo single_post_title('',false)."\n".wz_get_current_encoded_url(); ?>" target="_blank"><li>
+				E-Mail
+			</li></a>
 		</ul>
 	</div>
 	<div class="element">
