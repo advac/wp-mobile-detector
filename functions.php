@@ -9,12 +9,12 @@ function websitez_check_for_update(){
 		'wc-api' => 'upgrade-api',
 		'request' => 'pluginupdatecheck',
 		'plugin_name' => WEBSITEZ_PLUGIN_NAME,
-		'version' => 'a-wp-mobile-detector/wp-mobile-detector.php',
-		'software_version' => '2.9',
+		'version' => 'wp-mobile-detector/websitez-wp-mobile-detector.php',
+		'software_version' => '3.1',
 		'product_id' => 'WP Mobile Detector',
 		'activation_email' => get_option(WEBSITEZ_LICENSE_EMAIL_NAME),
 		'api_key' => get_option(WEBSITEZ_LICENSE_KEY_NAME),
-		'domain' => 'wpmobiledetector.websitez.com',
+		'domain' => 'websitez.com',
 		'instance' => $websitez_options['general']['password']
 	);
 	$args = array(
@@ -301,7 +301,7 @@ function websitez_plugin_activated(){
 }
 
 function websitez_settings_link( $links, $file ) {
- 	if( $file == 'a-wp-mobile-detector/wp-mobile-detector.php' && function_exists( "admin_url" ) ) {
+ 	if( $file == 'wp-mobile-detector/websitez-wp-mobile-detector.php' && function_exists( "admin_url" ) ) {
 		$settings_link = '<a href="' . admin_url( 'admin.php?page=websitez_themes' ) . '">' . __('Settings') . '</a>';
 		array_push( $links, $settings_link ); // after other links
 	}
@@ -539,32 +539,9 @@ function websitez_reclamation_sidebar_params($params){
 	
 	return $params;
 } 
-/*
-This is called on activation of the plugin
-*/
-function websitez_install(){
-	global $wpdb, $websitez_preinstalled_templates, $table_prefix;
 
-	/*
-	Setup the stats table to record mobile visits
-	*/
-	$table_name = WEBSITEZ_STATS_TABLE;
-	if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
-		$sql = "CREATE TABLE " . $table_name . " (
-			id int(11) NOT NULL AUTO_INCREMENT,
-			data text NOT NULL,
-			device_type int(2) NOT NULL,
-			created_at DATETIME NOT NULL,
-			UNIQUE KEY id (id),
-			PRIMARY KEY(created_at)
-			);";
-	
-	  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	  dbDelta($sql);
-	}
-	
-	//Default options for the customizable mobile theme
-	$websitez_options_default = array(
+function websitez_default_settings(){
+	return array(
 		'colors' => array(
 			"custom_color_light"=>"4f7498",
 			"custom_color_medium_light"=>"abbdce",
@@ -606,6 +583,34 @@ function websitez_install(){
 			"show_search"=>"yes"
 		)
 	);
+}
+
+/*
+This is called on activation of the plugin
+*/
+function websitez_install(){
+	global $wpdb, $websitez_preinstalled_templates, $table_prefix;
+
+	/*
+	Setup the stats table to record mobile visits
+	*/
+	$table_name = WEBSITEZ_STATS_TABLE;
+	if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
+		$sql = "CREATE TABLE " . $table_name . " (
+			id int(11) NOT NULL AUTO_INCREMENT,
+			data text NOT NULL,
+			device_type int(2) NOT NULL,
+			created_at DATETIME NOT NULL,
+			UNIQUE KEY id (id),
+			PRIMARY KEY(created_at)
+			);";
+	
+	  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	  dbDelta($sql);
+	}
+	
+	//Default options for the customizable mobile theme
+	$websitez_options_default = websitez_default_settings();
 	
 	//Set the default options if they do not exist
 	$websitez_options = websitez_get_options();
