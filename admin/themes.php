@@ -221,7 +221,7 @@ if(isset($_GET['ftp'])){
 			$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
 			if ( ! WP_Filesystem($creds) ) {
 				echo '<p>We could not set the permissions on the cache folder for the WP Mobile Detector. The permissions need to be 777 in order for the plugin to work properly. Please set these permissions, and then refresh this page.</p><p>Execute the following command via SSH:<br><strong>chmod 777 '.$cache.'</strong></p><p>Connect via FTP to your site, navigate to this folder
-"wp-content/plugins/a-wp-mobile-detector/". You\'ll see a "cache" folder. Right click and there should be an option to
+"wp-content/plugins/wp-mobile-detector/". You\'ll see a "cache" folder. Right click and there should be an option to
 set the permissions for the folder. You\'ll want to enter 777 and then click apply.</p>';
 				return;
 			}	
@@ -442,7 +442,7 @@ Default settings
 						<div class="block">
 							<label><?php _e('Select the home page for mobile visitors:','wp-mobile-detector'); ?></label>
 							<div>
-								<select id="mobile_home_page" onchange="__wza.save();">
+								<select id="mobile_home_page" onchange="__wza.new_mobile_home_page = true; __wza.save();">
 									<option value=""><?php _e('WordPress Default','wp-mobile-detector'); ?></option>
 									<?php
 									$pages = get_pages(array());
@@ -595,7 +595,7 @@ Default settings
 									<?php } ?>
 								</select>
 								<div>
-									<small><?php _e('This is the mobile theme that will be used for mobile visitors. Any theme located in "wp-content/themes" and "wp-content/plugins/a-wp-mobile-detector/themes" will show up here. Only the <strong>WZ Mobile</strong>, <strong>Websitez Mobile</strong> and <strong>Corporate Mobile</strong> can be modified by the interactive theme editor.','wp-mobile-detector'); ?></small>
+									<small><?php _e('This is the mobile theme that will be used for mobile visitors. Any theme located in "wp-content/themes" and "wp-content/plugins/wp-mobile-detector/themes" will show up here. Only the <strong>WZ Mobile</strong>, <strong>Websitez Mobile</strong> and <strong>Corporate Mobile</strong> can be modified by the interactive theme editor.','wp-mobile-detector'); ?></small>
 								</div>
 							</div>
 						</div>
@@ -1276,7 +1276,7 @@ Default settings
 														$plugins = get_option('active_plugins');
 														$i = 0;
 														foreach($plugins as $k => $plugin){
-															if(stripos($plugin, 'a-wp-mobile-detector') === false){
+															if(stripos($plugin, 'wp-mobile-detector') === false){
 															$parts = explode("/", $plugin);
 															if($i != 0 && $i % 5 == 0){ ?>
 															</tr>
@@ -1505,6 +1505,7 @@ function drawChart() {
 google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawChart);
 var __wza = {
+	new_mobile_home_page: false,
 	disabled_plugins: '<?php echo $websitez_options['general']['disable_plugins']; ?>',
 	iframe_url: '<?php bloginfo('url');?>/?websitez-mobile=1&uid=<?php echo mt_rand(1,100000); ?>',
 	//mode: 'doNOTsave',
@@ -1640,8 +1641,11 @@ var __wza = {
 		return false;
 	},
 	refreshIframe: function(){
-		document.getElementById('websitez-preview').setAttribute('src', __wza.iframe_url);
-		document.getElementById('websitez-preview').contentDocument.location.reload(true);
+		if(__wza.new_mobile_home_page === true){
+			location.reload(true);
+		}else{
+			document.getElementById('websitez-preview').contentDocument.location.reload(true);
+		}
 	},
 	rand: function(limit){
 		limit = (limit > 0 ? limit : 100000);
@@ -1782,7 +1786,7 @@ jQuery(document).ready(function () {
 			}
 		},
 		images: {
-			clientPath: '<?php bloginfo('url');?>/wp-content/plugins/a-wp-mobile-detector/admin/images/'
+			clientPath: '<?php bloginfo('url');?>/wp-content/plugins/wp-mobile-detector/admin/images/'
 		}
 	},
 	function(color,context){

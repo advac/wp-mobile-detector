@@ -4,7 +4,7 @@ Contributors: websitezcom
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 4.2.2
-Stable tag: 3.1
+Stable tag: 3.1.1
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -33,7 +33,7 @@ For more information please visit the [WP Mobile Detector PRO](http://websitez.c
 
 OR
 
-1. Unzip and place the 'a-wp-mobile-detector' folder in your 'wp-content/plugins' directory
+1. Unzip and place the 'wp-mobile-detector' folder in your 'wp-content/plugins' directory
 2. Click the 'Activate' link for WP Mobile Detector on your Plugins page (in the WordPress administration page)
 
 == Frequently Asked Questions ==
@@ -77,6 +77,13 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 7. Anakin Mobile Theme
 
 == Changelog ==
+
+= 3.1.1 =
+
++ Fixing image link issues.
++ Fixing activation logic.
++ Adding some debugging.
++ Fixed the references to DIR for older versions of PHP.
 
 = 3.1 =
 
@@ -235,6 +242,10 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 + Release of plugin.
 
 == Upgrade Notice ==
+
+= 3.1.1 =
+
+This version fixes the theme editor not showing up on older versions of PHP.
 
 = 3.0 =
 

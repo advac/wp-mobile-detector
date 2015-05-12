@@ -46,7 +46,7 @@ function websitez_save_options() {
 	$response = array();
 	
 	if(count($websitez_options) > 0){
-		if(update_option('websitez-options', $options)){
+		if(websitez_set_options($websitez_options)){
 			$response['status'] = "true";
 			$response['theme'] = $_POST['general']['selected_mobile_theme'];
 		}else{
@@ -143,14 +143,14 @@ function websitez_get_ordered_pages($ordered_pages){
 }
 
 function websitez_home_page(){
-	include(__DIR__."/home.php");
+	include(dirname(__FILE__)."/home.php");
 }
 
 function websitez_themes_page(){
-	include(__DIR__."/themes.php");
+	include(dirname(__FILE__)."/themes.php");
 }
 
 function websitez_upgrade(){
-	include(__DIR__."/upgrade.php");
+	include(dirname(__FILE__)."/upgrade.php");
 }
 ?>

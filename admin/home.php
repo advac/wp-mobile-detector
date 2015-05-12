@@ -50,6 +50,9 @@
 										<li>
 											<a href="http://twitter.com/websitezcom"><?php _e('WP Mobile Detector on Twitter','wp-mobile-detector'); ?></a>
 										</li>
+										<li>
+											<a href="http://websitez.com/blog/"><?php _e('WP Mobile Detector Blog','wp-mobile-detector'); ?></a>
+										</li>
 									</ul>
 								</td>
 							</tr>
