@@ -1,8 +1,11 @@
+<?php
+$websitez_options = websitez_get_options();
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html <?php language_attributes(); ?>>
 <head profile="http://gmpg.org/xfn/11">
 	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
-	<title><?php bloginfo('name'); ?><?php wp_title(); ?></title>
+	<title><?php wp_title(); ?></title>
 	<link rel="profile" href="http://gmpg.org/xfn/11" />
 	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
 	<meta name="generator" content="WordPress <?php bloginfo('version'); ?>" />
@@ -40,6 +43,11 @@
 	<?php wp_head() ?>
 </head>
 <body <?php body_class(); ?>>
+	<?php
+	if(strlen($websitez_options['ads']['show_header_snippet']) > 0){
+		echo stripslashes($websitez_options['ads']['show_header_snippet']);
+	}
+	?>
 	<a name="top"></a>
 	<div class="websitez-header">
 		<?php
