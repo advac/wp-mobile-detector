@@ -418,7 +418,7 @@ Default settings
 					</div>
 					<div id="intro" style="width: 397px; z-index: 17; position: fixed; color: #efefef; margin: 70px 0px 0px 0px; text-align: center; display: none;"></div>
 					<div class="iphone6">
-						<iframe id="websitez-preview" name="websitez-preview" src="<?php bloginfo('url');?>/?websitez-mobile=1&uid=<?php echo mt_rand(1,100000); ?>" frameborder="0" class="iphone6-box" scrolling="auto"></iframe>
+						<iframe id="websitez-preview" name="websitez-preview" src="<?php echo get_bloginfo('url');?>/?websitez-mobile=1&uid=<?php echo mt_rand(1,100000); ?>" frameborder="0" class="iphone6-box" scrolling="auto"></iframe>
 					</div>
 				</td>
 				<td width="100%" height="100%">
@@ -1658,7 +1658,11 @@ var __wza = {
 		if(__wza.new_mobile_home_page === true){
 			location.reload(true);
 		}else{
-			document.getElementById('websitez-preview').contentDocument.location.reload(true);
+			try {
+			    document.getElementById('websitez-preview').contentDocument.location.reload(true);
+			}catch(err) {
+			    location.reload(true);
+			}
 		}
 	},
 	rand: function(limit){
