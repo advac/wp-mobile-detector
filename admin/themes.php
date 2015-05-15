@@ -599,7 +599,7 @@ Default settings
 									<?php } ?>
 								</select>
 								<div>
-									<small><?php _e('This is the mobile theme that will be used for mobile visitors. Any theme located in "wp-content/themes" and "wp-content/plugins/wp-mobile-detector/themes" will show up here. Only the <strong>WZ Mobile</strong>, <strong>Websitez Mobile</strong> and <strong>Corporate Mobile</strong> can be modified by the interactive theme editor.','wp-mobile-detector'); ?></small>
+									<small><?php _e('This is the mobile theme that will be used for mobile visitors. Any theme located in "wp-content/themes" and "wp-content/plugins/wp-mobile-detector/themes" will show up here. Only the <strong>Amanda Mobile</strong>, <strong>WZ Mobile</strong>, <strong>Websitez Mobile</strong> and <strong>Corporate Mobile</strong> can be modified by the interactive theme editor.','wp-mobile-detector'); ?></small>
 								</div>
 							</div>
 						</div>
