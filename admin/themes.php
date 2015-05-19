@@ -555,7 +555,7 @@ Default settings
 									$icons = array("facebook.png","twitter.png","delicious.png","google.png","linkedin.png","reddit.png","stumbleupon.png","email.png"); ?>
 									<label><?php _e('Please select the icons you would like shown to the visitor.','wp-mobile-detector'); ?></label>
 									<div class="icons">
-										<? foreach($icons as $icon){ ?>
+										<?php foreach($icons as $icon){ ?>
 										<div style="width: 60px; margin-right: 20px; margin-bottom: 10px; float: left;"><input type="checkbox" class="sharing-icons" value="<?php echo $icon; ?>"<?php echo (stripos($websitez_options['theme']['sharing_icons'], $icon) !== false ? ' checked' : ''); ?>> <img src="<?php echo WEBSITEZ_PLUGIN_WEB_DIR."admin/images/32x32/".$icon; ?>"></div>
 										<?php } ?>
 										<div style="clear: both;"></div>
