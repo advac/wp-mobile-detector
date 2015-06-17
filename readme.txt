@@ -4,7 +4,7 @@ Contributors: websitezcom
 Minimum version: 2.7
 Requires at least: 2.7
 Tested up to: 4.2.2
-Stable tag: 3.2
+Stable tag: 3.3
 
 WP Mobile Detector automatically detects standard and advanced mobile devices and displays a compatible wordpress mobile theme.
 
@@ -77,6 +77,11 @@ Please try de-activating the plugin and re-activating it. If this does not work,
 7. Anakin Mobile Theme
 
 == Changelog ==
+
+= 3.3 =
+
++ Fixed a security issue with the ajax save in the administration area.
++ Added multiple custom menus support.
 
 = 3.2 =
 

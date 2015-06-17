@@ -5,20 +5,39 @@ $menu_order = explode(",",$websitez_options['sidebar']['menu_order']);
 foreach($menu_order as $menu):
 	if($menu == "show_search" && $websitez_options['sidebar']['show_search'] == "yes"){
 		get_search_form();
-	}else if($menu == "show_menu" && $websitez_options['sidebar']['show_menu'] == "yes"){
-		if(function_exists('wp_nav_menu')){
-			$args = array('container'=>false,'echo'=>'0');
-			if(strlen($websitez_options['sidebar']['custom_nav_menu_id']) > 0){
-				$args['menu'] = $websitez_options['sidebar']['custom_nav_menu_id'];
-			}
-			$menu = wp_nav_menu( $args );
-			if(strlen($menu) > 0){
-				echo "<div class='websitez-sidebar'>";
-				echo "<h3>Menu</h3>";
-				echo $menu;
-				echo "</div>";
-			}
-		}
+	}else if($menu == "show_menu" && $websitez_options['sidebar']['show_menu'] == "yes"){ ?>
+	<?php if(function_exists('wp_nav_menu')){ ?>
+	<?php $custom_menus = explode(",", $websitez_options['sidebar']['custom_menu_ids']); ?>
+	<?php if(count($custom_menus) > 0 && strlen($custom_menus[0]) > 0){ ?>
+	<?php $nav_menus = wp_get_nav_menus(); ?>
+	<?php foreach($custom_menus as $cm){ ?>
+	<?php if(strlen($cm) > 0){ ?>
+	<?php $menu = wp_nav_menu( array('container'=>false,'echo'=>false, 'menu' => $cm) ); ?>
+	<?php if(strlen($menu) > 0){ ?>
+	<?php $name = "Menu"; ?>
+	<?php foreach($nav_menus as $nm){ ?>
+		<?php if($nm->term_id == $cm){ $name = $nm->name; } ?>
+	<?php } ?>
+		<div class="websitez-sidebar">
+			<h3><?php echo $name; ?></h3>
+			<?php echo $menu; ?>
+		</div>
+	<?php } ?>
+	<?php } ?>
+	<?php } ?>
+	<?php }else{ ?>
+	<?php if(strlen($websitez_options['sidebar']['custom_nav_menu_id']) > 0){ ?>
+	<?php $menu = wp_nav_menu( array('container'=>false,'echo'=>false, 'menu' => $websitez_options['sidebar']['custom_nav_menu_id']) ); ?>
+	<?php if(strlen($menu) > 0): ?>
+		<div class="websitez-sidebar">
+			<h3><?php _e('Menu'); ?></h3>
+			<?php echo $menu; ?>
+		</div>
+	<?php endif; ?>
+	<?php } ?>
+	<?php } ?>
+	<?php } ?>
+	<?php
 	}else if($menu == "show_pages" && $websitez_options['sidebar']['show_pages'] == "yes"){
 		?>
 		<div class="websitez-sidebar">

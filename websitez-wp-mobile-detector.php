@@ -3,7 +3,7 @@
  Plugin Name: WP Mobile Detector
  Plugin URI: http://www.websitez.com/
  Description: Create a mobile friendly WordPress website instantly for over 5,000+ mobile devices.
- Version: 3.2
+ Version: 3.3
  Author: Websitez.com, LLC
  Author URI: http://www.websitez.com
  Text Domain: wp-mobile-detector
@@ -32,7 +32,7 @@ endif;
 Define Globals
 */
 define('WEBSITEZ_PLUGIN_NAME', 'WP Mobile Detector');
-define('WEBSITEZ_PLUGIN_VERSION', '3.0');
+define('WEBSITEZ_PLUGIN_VERSION', '3.3');
 define('WEBSITEZ_PLUGIN_AUTHORIZATION', 'wp_mobile_detector_token');
 define('WEBSITEZ_PLUGIN_DIR', dirname(__FILE__));
 define('WEBSITEZ_PLUGIN_WEB_DIR', plugin_dir_url(__FILE__));

@@ -49,13 +49,37 @@ $menu_order = explode(",",$websitez_options['sidebar']['menu_order']);
 		</ul>
 	</div>
 	<?php elseif($menu == "show_menu" && $websitez_options['sidebar']['show_menu'] == "yes" && function_exists('wp_nav_menu')): ?>
-	<?php $menu = wp_nav_menu( array('container'=>false,'echo'=>false) ); ?>
+	<?php if(function_exists('wp_nav_menu')){ ?>
+	<?php $custom_menus = explode(",", $websitez_options['sidebar']['custom_menu_ids']); ?>
+	<?php if(count($custom_menus) > 0 && strlen($custom_menus[0]) > 0){ ?>
+	<?php $nav_menus = wp_get_nav_menus(); ?>
+	<?php foreach($custom_menus as $cm){ ?>
+	<?php if(strlen($cm) > 0){ ?>
+	<?php $menu = wp_nav_menu( array('container'=>false,'echo'=>false, 'menu' => $cm) ); ?>
+	<?php if(strlen($menu) > 0){ ?>
+	<?php $name = "Menu"; ?>
+	<?php foreach($nav_menus as $nm){ ?>
+		<?php if($nm->term_id == $cm){ $name = $nm->name; } ?>
+	<?php } ?>
+		<div class="element">
+			<h3><i class="icon-user"></i> <?php echo $name; ?></h3>
+			<?php echo $menu; ?>
+		</div>
+	<?php } ?>
+	<?php } ?>
+	<?php } ?>
+	<?php }else{ ?>
+	<?php if(strlen($websitez_options['sidebar']['custom_nav_menu_id']) > 0){ ?>
+	<?php $menu = wp_nav_menu( array('container'=>false,'echo'=>false, 'menu' => $websitez_options['sidebar']['custom_nav_menu_id']) ); ?>
 	<?php if(strlen($menu) > 0): ?>
 		<div class="element">
-			<h3><i class="icon-user icon-white"></i> <?php _e('Menu'); ?></h3>
+			<h3><i class="icon-user"></i> <?php _e('Menu'); ?></h3>
 			<?php echo $menu; ?>
 		</div>
 	<?php endif; ?>
+	<?php } ?>
+	<?php } ?>
+	<?php } ?>
 	<?php endif; ?>
 	<?php endforeach; ?>
 	<div class="element">

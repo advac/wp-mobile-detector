@@ -5,55 +5,58 @@ if(WEBSITEZ_MODE == "production"){
 
 function websitez_save_options() {
 	global $wpdb; // this is how you get access to the database
-	$websitez_options = array();
-	$path = WEBSITEZ_PLUGIN_DIR.'/themes';
-	$themes_preinstalled = websitez_get_themes($path,true);
-
-	$preinstalled_themes_update = false;
-	foreach($themes_preinstalled as $k=>$v):
-		if($v['Template']==$_POST['general']['selected_mobile_theme']){
-			//If this is true, this is a theme located in the plugins folder
-			//This value will tell the rest of the script to look in the plugin themes folder
+	$response = array("status" => "false");
+	if ( current_user_can( 'manage_options' ) ) {
+		$websitez_options = array();
+		$path = WEBSITEZ_PLUGIN_DIR.'/themes';
+		$themes_preinstalled = websitez_get_themes($path,true);
+	
+		$preinstalled_themes_update = false;
+		foreach($themes_preinstalled as $k=>$v):
+			if($v['Template']==$_POST['general']['selected_mobile_theme']){
+				//If this is true, this is a theme located in the plugins folder
+				//This value will tell the rest of the script to look in the plugin themes folder
+				if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
+					update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, "true");
+					$preinstalled_themes_update = true;
+				}
+			}
+		endforeach;
+	
+		//If this is false, it means we're using a theme from the regular themes folder
+		//and must tell the rest of the script not to change the theme folder location
+		if($preinstalled_themes_update == false){
 			if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
-				update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, "true");
-				$preinstalled_themes_update = true;
+				update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, "false");
 			}
 		}
-	endforeach;
-
-	//If this is false, it means we're using a theme from the regular themes folder
-	//and must tell the rest of the script not to change the theme folder location
-	if($preinstalled_themes_update == false){
-		if(get_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME)){
-			update_option(WEBSITEZ_USE_PREINSTALLED_THEMES_NAME, "false");
-		}
-	}
-	
-	if(get_option(WEBSITEZ_ADVANCED_THEME))
-		update_option(WEBSITEZ_ADVANCED_THEME, $_POST['general']['selected_mobile_theme']);
-	if(get_option(WEBSITEZ_BASIC_THEME))
-		update_option(WEBSITEZ_BASIC_THEME, $_POST['general']['selected_mobile_theme']);
 		
-	foreach($_POST as $k=>$v):
-		if(is_array($v)){
-			foreach($v as $key=>$value):
-				$websitez_options[$k][$key] = $value;
-			endforeach;
+		if(get_option(WEBSITEZ_ADVANCED_THEME))
+			update_option(WEBSITEZ_ADVANCED_THEME, $_POST['general']['selected_mobile_theme']);
+		if(get_option(WEBSITEZ_BASIC_THEME))
+			update_option(WEBSITEZ_BASIC_THEME, $_POST['general']['selected_mobile_theme']);
+			
+		$protected_keys = array();
+		
+		foreach($_POST as $k=>$v){
+			if(is_array($v)){
+				foreach($v as $key=>$value){
+					$websitez_options[$k][$key] = $value;
+				}
+			}
 		}
-	endforeach;
-	$options = serialize($websitez_options);
-	
-	$response = array();
-	
-	if(count($websitez_options) > 0){
-		if(websitez_set_options($websitez_options)){
-			$response['status'] = "true";
-			$response['theme'] = $_POST['general']['selected_mobile_theme'];
+		$options = serialize($websitez_options);
+		
+		if(count($websitez_options) > 0){
+			if(websitez_set_options($websitez_options)){
+				$response['status'] = "true";
+				$response['theme'] = $_POST['general']['selected_mobile_theme'];
+			}else{
+				$response['status'] = "false";
+			}
 		}else{
 			$response['status'] = "false";
 		}
-	}else{
-		$response['status'] = "false";
 	}
 	echo json_encode($response);
 	die();

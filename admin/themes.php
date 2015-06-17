@@ -378,6 +378,9 @@ $ct = current_mobile_theme_info($themes);
 .upgrade:hover{
 	color: #efefef;
 }
+ul.children{
+	margin-left: 10px;
+}
 /*
 Default settings
 */
@@ -555,7 +558,7 @@ Default settings
 									$icons = array("facebook.png","twitter.png","delicious.png","google.png","linkedin.png","reddit.png","stumbleupon.png","email.png"); ?>
 									<label><?php _e('Please select the icons you would like shown to the visitor.','wp-mobile-detector'); ?></label>
 									<div class="icons">
-										<?php foreach($icons as $icon){ ?>
+										<? foreach($icons as $icon){ ?>
 										<div style="width: 60px; margin-right: 20px; margin-bottom: 10px; float: left;"><input type="checkbox" class="sharing-icons" value="<?php echo $icon; ?>"<?php echo (stripos($websitez_options['theme']['sharing_icons'], $icon) !== false ? ' checked' : ''); ?>> <img src="<?php echo WEBSITEZ_PLUGIN_WEB_DIR."admin/images/32x32/".$icon; ?>"></div>
 										<?php } ?>
 										<div style="clear: both;"></div>
@@ -813,37 +816,44 @@ Default settings
 						<div class="block">
 						
 							<p><?php _e('Each of the options below can be dragged and dropped to change the order they appear on the mobile website.','wp-mobile-detector'); ?></p>
+							
+							<p><?php _e('Please utilize custom menus to show categories and pages. You can find this under the "Appearance -> Menus" section. All the menus created there will show up for selection here.','wp-mobile-detector'); ?></p>
 						
 						</div>
 						
 						<div id="menu_sort" class="">
 							<?php
+							$menus = get_terms( 'nav_menu', array( 'hide_empty' => true ) );
 							$menu_order = explode(",",$websitez_options['sidebar']['menu_order']);
 							foreach($menu_order as $menu){
-								if($menu == "show_menu" || $menu == "show_menu_div"){ ?>
+								if($menu == "show_menu" || $menu == "show_menu_div"){
+								?>
 								<div class="block tabber">
 									<?php
 									if(websitez_is_paid() != true && strlen($menu) > 0){
 										echo '<a href="admin.php?page=websitez_upgrade" class="upgrade">PRO ONLY</a>';
 									}?>
 									<div class="<?php echo (websitez_is_paid() != true ? ' disabled' : ''); ?>">
-										<label><?php _e('Show a custom navigation menu?','wp-mobile-detector'); ?></label>
+										<label><?php _e('Show custom menus?','wp-mobile-detector'); ?></label>
 										<div>
 											<input type="checkbox" id="show_menu" value="yes"<?php echo ($websitez_options['sidebar']['show_menu'] == "yes" ? " checked" : ""); ?>>
-											<div id="custom_menu_options" style="<?php echo ($websitez_options['sidebar']['show_menu'] != "yes" ? "display: none;" : ""); ?>">
-												<?php $menus = get_terms( 'nav_menu', array( 'hide_empty' => true ) ); ?>
-												<div class="block">
-													<label><?php _e('Select one of your existing theme menus from Appearance -> Menus.','wp-mobile-detector'); ?></label>
-													<div>
-														<?php // todo save this ?>
-														<select id="custom_nav_menu_id">
-															<option value=""><?php _e('Please select one...','wp-mobile-detector'); ?></option>
-															<?php foreach($menus as $menu){
-																echo "<option value='".$menu->term_id."'".($websitez_options['sidebar']['custom_nav_menu_id'] == $menu->term_id ? ' selected' : '').">".$menu->name."</option>\n";
-															}?>
-														</select>
-													</div>
+											<div id="show_menu_options" class="block" style="<?php echo ($websitez_options['sidebar']['show_menu'] != "yes" ? "display: none;" : ""); ?>">
+												<a href="#" onclick="jQuery('#show_menu_options').append(jQuery('#show_menu_options .custom_menu').clone().removeClass('custom_menu').prepend('<a href=\'#\' onclick=\'jQuery(this).parent().remove(); return false;\' style=\'float: right;\'>delete</a>')); return false;">Add another custom menu?</a><br><br>
+												<label><?php _e('Select from your existing menus from "Appearance -> Menus".','wp-mobile-detector'); ?></label>
+												<?php $custom_menu_ids = explode(",", $websitez_options['sidebar']['custom_menu_ids']); ?>
+												<?php foreach($custom_menu_ids as $k => $cmi){ ?>
+												<div class="block <?php if($k == 0) echo "custom_menu"; ?>">
+													<?php if($k != 0){ ?>
+													<a href="#" onclick="jQuery(this).parent().remove(); return false;" style="float: right;">delete</a>
+													<?php } ?>
+													<select>
+														<option value=""><?php _e('Please select one...','wp-mobile-detector'); ?></option>
+														<?php foreach($menus as $menu){
+															echo "<option value='".$menu->term_id."'".($cmi == $menu->term_id ? ' selected' : '').">".$menu->name."</option>\n";
+														}?>
+													</select>
 												</div>
+												<?php } ?>
 											</div>
 										</div>
 									</div>
@@ -875,7 +885,7 @@ Default settings
 														echo "<li><input type='checkbox' id='show_pages_items_item' name='show_pages_items_item' value='".$page->ID."'".(in_array($page->ID, $selected_pages) || count($selected_pages) == 0 ? ' checked' : '')."> <a href='".$page->guid."' target='_blank'>".$page->post_title."</a></li>";
 													} ?>
 													</ul>
-													<small><?php _e('Drag and drop each of the times to change their order.','wp-mobile-detector'); ?></small>
+													<small><?php _e('If you would like to change the order, please disable this menu and use a custom menu to do so.','wp-mobile-detector'); ?></small>
 												</div>
 											</div>
 										</div>
@@ -908,7 +918,7 @@ Default settings
 														echo "<li><input type='checkbox' id='show_categories_items_item' name='show_categories_items_item' value='".$category->cat_ID."'".(in_array($category->cat_ID, $selected_categories) || count($selected_categories) == 0 ? ' checked' : '').">".$category->cat_name."</li>";
 													} ?>
 													</ul>
-													<small><?php _e('Drag and drop each of the times to change their order.','wp-mobile-detector'); ?></small>
+													<small><?php _e('If you would like to change the order, please disable this menu and use a custom menu to do so.','wp-mobile-detector'); ?></small>
 												</div>
 											</div>
 										</div>
@@ -1550,6 +1560,8 @@ var __wza = {
 		//Get the order of the menu items
 		var menu_order = "";
 		jQuery('#menu_sort .tabber input[type="checkbox"]').each(function(){menu_order += jQuery(this).attr("id")+",";});
+		var custom_menus = "";
+		jQuery('#show_menu_options select').each(function(){var val = jQuery(this).val(); if(val.length > 0){ custom_menus += val+",";}});
 		var data = {
 			action: 'websitez_options',
 			general: {
@@ -1613,7 +1625,8 @@ var __wza = {
 				show_categories_items: show_categories_items,
 				show_meta: jQuery("#show_meta:checked").val(),
 				show_search: jQuery("#show_search:checked").val(),
-				custom_nav_menu_id: jQuery('#custom_nav_menu_id').val()
+				custom_nav_menu_id: jQuery('#custom_nav_menu_id').val(),
+				custom_menu_ids: custom_menus
 			},
 			theme: {
 				sharing_icons: sharing_icons,
@@ -1716,7 +1729,7 @@ jQuery('#facebook').change(function(){
 	jQuery('#facebook-url').toggle();
 });
 jQuery('#show_menu').change(function(){
-	jQuery('#custom_menu_options').toggle();
+	jQuery('#show_menu_options').toggle();
 });
 jQuery('#show_pages').change(function(){
 	jQuery('#pages_menu_options').toggle();
@@ -1815,8 +1828,8 @@ jQuery(document).ready(function () {
 		__wza.save();
 	});
 	jQuery("#menu_sort").sortable({update: function(){__wza.save();}});
-	jQuery("#pages_menu_options ul").sortable({update: function(){__wza.save();}});
-	jQuery("#categories_menu_options ul").sortable({update: function(){__wza.save();}});
+	//jQuery("#pages_menu_options ul").sortable({update: function(){__wza.save();}});
+	//jQuery("#categories_menu_options ul").sortable({update: function(){__wza.save();}});
 	<?php if($_GET['tab'] == "stats"){ ?>
 	jQuery('#stats').click();
 	<?php }elseif($_GET['tab'] == "graphics"){ ?>
