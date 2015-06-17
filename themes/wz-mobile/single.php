@@ -1,6 +1,11 @@
 <?php get_header(); ?>
 		
 		<div id="content" class="part">
+			<?php
+			if(strlen($websitez_options['ads']['show_header_snippet']) > 0){
+				echo stripslashes($websitez_options['ads']['show_header_snippet']);
+			}
+			?>
 			<?php if(have_posts()) : ?>
 				<div id="individual_post">
 					<?php while(have_posts()) : the_post(); ?>
@@ -8,18 +13,20 @@
 						<?php $images = wz_boot_get_all_images(get_the_content(),get_the_ID()); ?>
 						<h1><?php the_title(); ?></h1>
 						<p class="meta">
-							Posted by <?php the_author_posts_link(); ?> <?php echo wz_calculate_time(get_the_date('Y-m-d H:i:s')); ?><br>
-							<?php _e("Category:", "wz-mobile"); ?> <?php the_category(', '); ?><br>
-							<?php the_tags(__("Tags","wz-mobile") . ': ', ', ', ''); ?>
+							<?php if($websitez_options['general']['no_authors'] != 'yes'){ ?>Posted by <?php the_author_posts_link(); ?> <?php } ?><?php if($websitez_options['general']['no_creation'] != 'yes'){ ?><?php echo wz_calculate_time(get_the_date('Y-m-d H:i:s')); ?><br><?php } ?>
+							<?php if($websitez_options['general']['no_categories'] != 'yes'){ ?><?php _e("Category:", "wz-mobile"); ?> <?php the_category(', '); ?><br><?php } ?>
+							<?php if($websitez_options['general']['no_tags'] != 'yes'){ ?><?php the_tags(__("Tags","wz-mobile") . ': ', ', ', ''); ?><?php } ?>
 						</p>
 						<p>
 							<?php the_content(); ?>
 							<?php wp_link_pages(); ?>
 						</p>
 					<?php endwhile; ?>
+					<?php if($websitez_options['general']['no_comments'] != 'yes'){ ?>
 					<div id="comments">
 						<?php comments_template(); ?>
 					</div>
+					<?php } ?>
 				</div>
 			<?php else : ?>
 			
@@ -45,6 +52,12 @@
 				</div>
 			</div>
 			<?php endif; ?>
+			
+			<?php
+			if(strlen($websitez_options['ads']['show_footer_snippet']) > 0){
+				echo stripslashes($websitez_options['ads']['show_footer_snippet']);
+			}
+			?>
 		</div><!-- END CONTENT -->
 		
 		<?php get_sidebar('right_single'); ?>
