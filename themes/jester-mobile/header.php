@@ -36,7 +36,7 @@ $websitez_options = websitez_get_options();
     }
   }
   
-  $(document).ready(function() {
+  jQuery(document).ready(function() {
 		setInterval(updateLayout, 400);
 	});
 	</script>
@@ -75,6 +75,6 @@ $websitez_options = websitez_get_options();
 			<?php get_sidebar(); ?>
 			<div style="clear: both;"></div>
 		</div>
-		<a onClick="$('.websitez-menu-content').toggle('slow'); $('.hid').toggle(); return false;" href="#"><div class="websitez-menu-button hid"><img src="<?php bloginfo('template_url'); ?>/images/small-down-arrow.png" border="0"></div></a>
-		<a onClick="$('.websitez-menu-content').toggle('slow'); $('.hid').toggle();" href="#top"><div class="websitez-menu-button hid hidden"><img src="<?php bloginfo('template_url'); ?>/images/small-up-arrow.png" border="0"></div></a>
+		<a onClick="jQuery('.websitez-menu-content').toggle('slow'); jQuery('.hid').toggle(); return false;" href="#"><div class="websitez-menu-button hid"><img src="<?php bloginfo('template_url'); ?>/images/small-down-arrow.png" border="0"></div></a>
+		<a onClick="jQuery('.websitez-menu-content').toggle('slow'); jQuery('.hid').toggle();" href="#top"><div class="websitez-menu-button hid hidden"><img src="<?php bloginfo('template_url'); ?>/images/small-up-arrow.png" border="0"></div></a>
 	</div>
